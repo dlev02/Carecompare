@@ -1,9 +1,5 @@
 import { DEVICE_CATALOG, POPULAR, findDeviceByNameOrId, currency } from './devices.js';
-
-// Bundle model (demo): up to 3 devices for $19.99/mo; extras +$5.99 each.
-const BUNDLE_BASE_INCLUDED = 3;
-const BUNDLE_BASE_PRICE = 19.99;
-const BUNDLE_EXTRA_PRICE = 5.99;
+import { computeTotals, BUNDLE_EXTRA_PRICE } from './pricing.js';
 
 const els = {
   deviceSearch: document.getElementById('deviceSearch'),
@@ -113,25 +109,6 @@ function changeQty(id, delta) {
   }
 }
 
-function computeTotals(items) {
-  let individualMonthly = 0;
-  let individualAnnual = 0;
-
-  for (const item of items) {
-    const dev = DEVICE_CATALOG.find(d => d.id === item.id);
-    if (!dev) continue;
-    individualMonthly += (dev.monthly || 0) * item.qty;
-    individualAnnual += (dev.annual || 0) * item.qty;
-  }
-
-  const totalQty = items.reduce((s, x) => s + x.qty, 0);
-  const extra = Math.max(0, totalQty - BUNDLE_BASE_INCLUDED);
-  const bundleMonthly = (totalQty === 0) ? 0 : (BUNDLE_BASE_PRICE + extra * BUNDLE_EXTRA_PRICE);
-  const bundleAnnual = bundleMonthly * 12;
-
-  return { individualMonthly, individualAnnual, bundleMonthly, bundleAnnual, totalQty, extra };
-}
-
 function renderList(items) {
   els.deviceList.innerHTML = '';
   if (items.length === 0) {
@@ -187,20 +164,18 @@ function renderList(items) {
 }
 
 function renderTotals() {
-  const t = computeTotals(basket);
-  els.individualMonthly.textContent = currency(t.individualMonthly);
-  els.individualAnnual.textContent = currency(t.individualAnnual);
-  els.bundleMonthly.textContent = currency(t.bundleMonthly);
-  els.bundleAnnual.textContent = currency(t.bundleAnnual);
-
-  const breakdown = [];
-  if (t.extra > 0) {
-    els.bundleDetails.textContent = `${t.extra} extra × ${currency(BUNDLE_EXTRA_PRICE)}/mo`;
+  const totals = computeTotals(basket);
+  els.individualMonthly.textContent = currency(totals.individualMonthly);
+  els.individualAnnual.textContent = currency(totals.individualAnnual);
+  els.bundleMonthly.textContent = currency(totals.bundleMonthly);
+  els.bundleAnnual.textContent = currency(totals.bundleAnnual);
+  if (totals.extra > 0) {
+    els.bundleDetails.textContent = `${totals.extra} extra × ${currency(BUNDLE_EXTRA_PRICE)}/mo`;
   } else {
     els.bundleDetails.textContent = '';
   }
 
-  const annualSavings = t.individualAnnual - t.bundleAnnual;
+  const annualSavings = totals.individualAnnual - totals.bundleAnnual;
   if (annualSavings > 0.009) {
     els.savingsCallout.hidden = false; // ensure attribute isn't set
     els.savingsCallout.classList.remove('hidden');
@@ -269,12 +244,19 @@ function onSearchInput() {
 function onSearchKeyDown(e) {
   if (e.key === 'Enter') {
     if (dropdownState.open && dropdownState.highlighted >= 0) {
-      selectSuggestion(dropdownState.highlighted);
+      const d = dropdownState.items[dropdownState.highlighted];
+      if (d) {
+        const qty = Math.max(1, parseInt(els.deviceQty.value || '1', 10));
+        addDevice(d, qty);
+        els.deviceSearch.value = '';
+        els.deviceQty.value = '1';
+        closeDropdown();
+      }
       e.preventDefault();
     } else {
       // Trigger add if user pressed Enter without dropdown open
       e.preventDefault();
-      document.getElementById('addDeviceBtn').click();
+      els.addDeviceBtn.click();
     }
     return;
   }
