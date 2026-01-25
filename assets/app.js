@@ -80,7 +80,6 @@ const els = {
   savingsDetail: document.getElementById('savingsDetail'),
   themeToggle: document.getElementById('themeToggle'),
   clearAllBtn: document.getElementById('clearAllBtn'),
-  copyBtn: document.getElementById('copyBtn'),
   totalsArea: document.getElementById('totalsArea'),
   inventoryColumn: document.getElementById('inventoryColumn'),
   summaryColumn: document.getElementById('summaryColumn'),
@@ -171,11 +170,7 @@ function init() {
   };
 
   els.clearAllBtn.onclick = () => { basket = []; render(); toast('List cleared', '🗑️'); };
-  els.copyBtn.onclick = () => {
-    const t = computeTotals(basket);
-    const summary = `AppleCare Savings: I'm saving ${currency(t.individualAnnual - t.bundleAnnual)}/yr with AppleCare One for ${t.totalQty} devices!`;
-    navigator.clipboard.writeText(summary).then(() => toast('Summary copied to clipboard'));
-  };
+
 
   // Keyboard: Command + K and Escape
   window.onkeydown = (e) => {
