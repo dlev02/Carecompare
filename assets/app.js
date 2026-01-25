@@ -112,6 +112,7 @@ let explorerState = {
 
 function init() {
   const categoryIcons = {
+    'iPhone': '📱', 'Mac': '💻', 'Watch': '⌚',
     'Audio': '🎧', 'Vision': '🥽', 'iPad': '🪄',
     'Display': '🖥️', 'Home': '🏠'
   };
@@ -322,7 +323,7 @@ function render() {
     if (!dev) return;
 
     const row = document.createElement('div');
-    row.className = 'animate-in flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50/50 p-4 dark:border-white/5 dark:bg-white/5';
+    row.className = 'animate-in flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm backdrop-blur-md dark:border-white/5 dark:bg-white/5 glass-card';
     row.innerHTML = `
       <div class="flex-1 min-w-0">
         <div class="font-bold text-sm truncate">${dev.name}</div>
