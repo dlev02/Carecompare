@@ -187,6 +187,57 @@
   }
 }
 
+@keyframes pulse-subtle {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.01);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+#savingsCallout:not(.hidden) {
+  animation: fade-in 0.5s ease, pulse-subtle 3s infinite ease-in-out;
+}
+
+/* Toast Notification */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  backdrop-filter: blur(15px);
+  z-index: 1000;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.dark .toast {
+  background: rgba(40, 40, 40, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* Responsive Grid Adjustments */
 @media (max-width: 768px) {
 
