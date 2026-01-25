@@ -1,3 +1,59 @@
-/* Tailwind now drives the UI. Keep this file for any tiny custom overrides if desired. */
+/* AppleCare Calculator 2.0 - Premium Styles */
 
+:root {
+  --apple-blue: #0071e3;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+}
 
+.dark {
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+/* Custom Scrollbar for Dropdown */
+#deviceDropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+#deviceDropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#deviceDropdown::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.dark #deviceDropdown::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Animations */
+@keyframes fadeInScale {
+  0% { opacity: 0; transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.animate-in {
+  animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Device Chip States */
+.quick-chip {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quick-chip:hover {
+  background-color: var(--apple-blue);
+  color: white;
+  border-color: var(--apple-blue);
+  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+}
+
+/* Responsive Grid Adjustments */
+@media (max-width: 768px) {
+  .md\:col-span-7, .md\:col-span-12, .md\:col-span-5 {
+    grid-column: span 12 / span 12;
+  }
+}

@@ -36,7 +36,7 @@ function init() {
     const dev = DEVICE_CATALOG.find(d => d.id === id);
     if (!dev) continue;
     const chip = document.createElement('button');
-    chip.className = 'px-3 py-1.5 rounded-full border border-slate-300 bg-white/70 text-sm hover:border-blue-400 dark:hover:border-blue-400 hover:ring-1 hover:ring-blue-300/40 dark:hover:ring-1 dark:hover:ring-blue-400/40 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600/40 motion-safe:transition-transform motion-safe:duration-150 motion-safe:ease-out motion-safe:hover:-translate-y-0.5 active:scale-95 dark:border-slate-700 dark:bg-slate-800/50';
+    chip.className = 'quick-chip px-4 py-2 rounded-full border border-slate-200 bg-white shadow-sm text-xs font-bold transition-all hover:scale-105 active:scale-95 dark:border-white/10 dark:bg-white/5 dark:text-white';
     chip.type = 'button';
     chip.textContent = dev.name;
     chip.addEventListener('click', () => addDevice(dev, 1));
@@ -73,7 +73,7 @@ function init() {
     const isDark = document.documentElement.classList.contains('dark');
     const next = isDark ? 'light' : 'dark';
     applyTheme(next);
-    try { localStorage.setItem('theme', next); } catch {}
+    try { localStorage.setItem('theme', next); } catch { }
     // trigger subtle icon animation
     try {
       els.themeToggle.classList.remove('theme-burst');
@@ -81,7 +81,7 @@ function init() {
       void els.themeToggle.offsetWidth;
       els.themeToggle.classList.add('theme-burst');
       setTimeout(() => els.themeToggle.classList.remove('theme-burst'), 400);
-    } catch {}
+    } catch { }
   });
 
   render();
@@ -146,42 +146,52 @@ function renderList(items) {
     const dev = DEVICE_CATALOG.find(d => d.id === item.id);
     if (!dev) continue;
     const row = document.createElement('div');
-    // On small screens stack vertically; from sm and up use the 4-column layout
-    row.className = 'grid w-full grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-white/80 p-3 dark:border-slate-800 dark:bg-slate-800/60 sm:grid-cols-[1fr_auto_auto_auto] sm:items-center';
+    row.className = 'animate-in flex items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50/50 p-4 transition-all hover:bg-white dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10';
+
+    const info = document.createElement('div');
+    info.className = 'flex-1 min-w-0';
 
     const name = document.createElement('div');
-    name.className = 'font-semibold';
+    name.className = 'font-bold text-sm truncate';
     name.textContent = dev.name;
 
     const meta = document.createElement('div');
-    meta.className = 'text-sm text-slate-500';
-    meta.textContent = `${dev.category} • ${currency(dev.monthly)}/mo • ${currency(dev.annual)}/yr`;
+    meta.className = 'text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-0.5';
+    meta.textContent = `${dev.category} • ${currency(dev.monthly)}/mo`;
 
-    const qty = document.createElement('div');
-    // Keep controls left on mobile, right-align them only on wider screens
-    qty.className = 'inline-flex items-center gap-2 sm:justify-self-end';
+    info.append(name, meta);
+
+    const controls = document.createElement('div');
+    controls.className = 'flex items-center gap-3';
+
+    const qtyWrap = document.createElement('div');
+    qtyWrap.className = 'flex items-center bg-white dark:bg-white/10 rounded-xl border border-slate-200 dark:border-white/10 px-1 py-1 shadow-sm';
+
+    const btnClass = 'flex h-6 w-6 items-center justify-center rounded-lg text-xs font-bold transition-all hover:bg-slate-100 dark:hover:bg-white/20 active:scale-90';
+
     const minus = document.createElement('button');
-    minus.className = 'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600/40 motion-safe:transition-transform motion-safe:duration-150 motion-safe:ease-out motion-safe:hover:-translate-y-0.5 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 dark:hover:border-blue-400 dark:hover:text-blue-300';
-    minus.type = 'button';
-    minus.textContent = '−';
-    minus.addEventListener('click', () => changeQty(item.id, -1));
+    minus.className = btnClass;
+    minus.innerHTML = '−';
+    minus.onclick = () => changeQty(item.id, -1);
+
     const count = document.createElement('span');
-    count.className = 'min-w-[1.5rem] text-center';
-    count.textContent = String(item.qty);
+    count.className = 'px-3 text-xs font-bold';
+    count.textContent = item.qty;
+
     const plus = document.createElement('button');
-    plus.className = 'inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600/40 motion-safe:transition-transform motion-safe:duration-150 motion-safe:ease-out motion-safe:hover:-translate-y-0.5 active:scale-95 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700 dark:hover:border-blue-400 dark:hover:text-blue-300';
-    plus.type = 'button';
-    plus.textContent = '+';
-    plus.addEventListener('click', () => changeQty(item.id, +1));
-    qty.append(minus, count, plus);
+    plus.className = btnClass;
+    plus.innerHTML = '+';
+    plus.onclick = () => changeQty(item.id, 1);
+
+    qtyWrap.append(minus, count, plus);
 
     const del = document.createElement('button');
-    del.className = 'inline-flex items-center justify-center rounded-xl bg-red-600 px-3 py-2 text-white shadow hover:bg-red-500 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-red-300 dark:focus:ring-red-700/40 motion-safe:transition-transform motion-safe:duration-150 motion-safe:ease-out motion-safe:hover:-translate-y-0.5 active:scale-95 sm:justify-self-end';
-    del.type = 'button';
-    del.textContent = 'Remove';
-    del.addEventListener('click', () => removeDevice(item.id));
+    del.className = 'group flex h-8 w-8 items-center justify-center rounded-xl bg-red-50 text-red-500 transition-all hover:bg-red-500 hover:text-white dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500 dark:hover:text-white';
+    del.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" /></svg>';
+    del.onclick = () => removeDevice(item.id);
 
-    row.append(name, meta, qty, del);
+    controls.append(qtyWrap, del);
+    row.append(info, controls);
     els.deviceList.appendChild(row);
   }
 }
@@ -218,17 +228,19 @@ function render() {
 }
 
 // Expose a simple API for debugging
-window.__APP__ = { addDeviceById: (id, qty=1) => {
-  const dev = DEVICE_CATALOG.find(d => d.id === id);
-  if (dev) addDevice(dev, qty);
-}};
+window.__APP__ = {
+  addDeviceById: (id, qty = 1) => {
+    const dev = DEVICE_CATALOG.find(d => d.id === id);
+    if (dev) addDevice(dev, qty);
+  }
+};
 
 document.addEventListener('DOMContentLoaded', init);
 
 function applyInitialTheme() {
   // Follow system theme by default; respect previous explicit user choice
   let mode = null;
-  try { mode = localStorage.getItem('theme'); } catch {}
+  try { mode = localStorage.getItem('theme'); } catch { }
   if (mode !== 'light' && mode !== 'dark') {
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     mode = prefersDark ? 'dark' : 'light';
@@ -239,7 +251,7 @@ function applyInitialTheme() {
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', (e) => {
       let explicit = null;
-      try { explicit = localStorage.getItem('theme'); } catch {}
+      try { explicit = localStorage.getItem('theme'); } catch { }
       if (explicit === 'light' || explicit === 'dark') return;
       applyTheme(e.matches ? 'dark' : 'light');
     });
@@ -303,18 +315,23 @@ function renderDropdown() {
     const d = dropdownState.items[i];
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-700';
-    if (i === dropdownState.highlighted) btn.classList.add('bg-slate-100', 'dark:bg-slate-700');
+    btn.className = 'flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-all hover:bg-slate-100 dark:hover:bg-white/10';
+    if (i === dropdownState.highlighted) btn.classList.add('bg-slate-100', 'dark:bg-white/10');
+
+    const left = document.createElement('div');
     const title = document.createElement('div');
-    title.className = 'font-medium';
+    title.className = 'font-bold text-sm';
     title.textContent = d.name;
     const sub = document.createElement('div');
-    sub.className = 'text-xs text-slate-500';
-    sub.textContent = `${d.category} • ${currency(d.monthly)}/mo`;
-    const col = document.createElement('div');
-    col.className = 'flex flex-col';
-    col.append(title, sub);
-    btn.append(col);
+    sub.className = 'text-[10px] font-bold text-slate-400 uppercase tracking-tighter';
+    sub.textContent = d.category;
+    left.append(title, sub);
+
+    const price = document.createElement('div');
+    price.className = 'text-xs font-bold text-blue-600 dark:text-blue-400';
+    price.textContent = `${currency(d.monthly)}/mo`;
+
+    btn.append(left, price);
     btn.addEventListener('click', () => selectSuggestion(i));
     els.deviceDropdown.appendChild(btn);
   }
