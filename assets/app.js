@@ -311,7 +311,7 @@ function addDevice(device, qty) {
   } else {
     basket.push({ id: device.id, qty });
   }
-  toast(`${device.name} added`);
+
   render();
 }
 
@@ -350,7 +350,7 @@ function render() {
   const totals = computeTotals(basket);
   els.individualMonthly.textContent = currency(totals.individualMonthly);
   els.bundleMonthly.textContent = currency(totals.bundleMonthly);
-  els.bundleDetails.textContent = totals.extra > 0 ? `${totals.extra} additional × ${currency(BUNDLE_EXTRA_PRICE)}` : '';
+  els.bundleDetails.textContent = totals.extra > 0 ? `+ ${totals.extra} additional × ${currency(BUNDLE_EXTRA_PRICE)}` : 'Incl. 3 devices';
 
   // Calculate Tilt
   if (els.scaleContainer) {
