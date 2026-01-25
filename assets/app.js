@@ -49,7 +49,7 @@ const DEVICE_CATALOG = [
   { id: 'airpods-max', name: 'AirPods Max', category: 'Audio', monthly: 2.99, annual: 29.99 },
 ];
 
-const POPULAR = ['iphone-17-pro', 'macbook-pro-14', 'watch-series-11', 'airpods-pro-3', 'apple-vision-pro'];
+const POPULAR = ['iphone-17-pro', 'macbook-pro-14', 'watch-series-11', 'ipad-pro-11-m5', 'airpods-max'];
 
 // Helper for currency formatting
 function currency(amount) {
@@ -361,10 +361,26 @@ function render() {
   }
 
   const annual_savings = totals.individualAnnual - (totals.bundleMonthly * 12);
-  if (annual_savings > 1) {
+  const diff_monthly = totals.individualMonthly - totals.bundleMonthly;
+
+  if (diff_monthly > 0.01) {
+    // Bundle is cheaper
     els.savingsCallout.classList.remove('hidden');
-    els.savingsHeadline.textContent = `Save ${currency(annual_savings)}/yr 🎉`;
+    els.savingsCallout.classList.remove('bg-blue-600', 'dark:bg-blue-700');
+    els.savingsCallout.classList.add('bg-green-500', 'dark:bg-green-600');
+
+    const display_savings = Math.max(annual_savings, diff_monthly * 12);
+    els.savingsHeadline.textContent = `Save ${currency(display_savings)}/yr 🎉`;
     els.savingsDetail.textContent = `You're getting more value with AppleCare One.`;
+  } else if (diff_monthly < -0.01) {
+    // Individual is cheaper
+    els.savingsCallout.classList.remove('hidden');
+    els.savingsCallout.classList.remove('bg-green-500', 'dark:bg-green-600');
+    els.savingsCallout.classList.add('bg-blue-600', 'dark:bg-blue-700');
+
+    const individual_savings = Math.abs(diff_monthly) * 12;
+    els.savingsHeadline.textContent = `${currency(individual_savings)}/yr cheaper `;
+    els.savingsDetail.textContent = `Individual subscriptions are currently your best value.`;
   } else {
     els.savingsCallout.classList.add('hidden');
   }
