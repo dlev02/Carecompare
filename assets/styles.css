@@ -7,32 +7,83 @@
 }
 
 .dark {
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --accent-gradient: linear-gradient(135deg, #0071e3, #6366f1);
 }
 
-/* Custom Scrollbar for Dropdown */
-#deviceDropdown::-webkit-scrollbar {
+/* Gradient Text */
+.text-gradient {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Living Background */
+.mesh-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -10;
+  filter: blur(80px);
+  opacity: 0.4;
+  background: radial-gradient(circle at 10% 20%, rgba(0, 113, 227, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(0, 113, 227, 0.1) 0%, transparent 40%);
+  animation: mesh-move 20s infinite alternate ease-in-out;
+}
+
+@keyframes mesh-move {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+
+  100% {
+    transform: translateY(-20px) scale(1.1);
+  }
+}
+
+/* Custom Scrollbars */
+#deviceDropdown::-webkit-scrollbar,
+#deviceList::-webkit-scrollbar {
   width: 6px;
 }
 
-#deviceDropdown::-webkit-scrollbar-track {
+#deviceDropdown::-webkit-scrollbar-track,
+#deviceList::-webkit-scrollbar-track {
   background: transparent;
 }
 
-#deviceDropdown::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
+#deviceDropdown::-webkit-scrollbar-thumb,
+#deviceList::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.05);
   border-radius: 10px;
 }
 
-.dark #deviceDropdown::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+.dark #deviceDropdown::-webkit-scrollbar-thumb,
+.dark #deviceList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+#deviceList {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 /* Animations */
 @keyframes fadeInScale {
-  0% { opacity: 0; transform: scale(0.98); }
-  100% { opacity: 1; transform: scale(1); }
+  0% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .animate-in {
@@ -41,19 +92,107 @@
 
 /* Device Chip States */
 .quick-chip {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .quick-chip:hover {
   background-color: var(--apple-blue);
-  color: white;
+  color: white !important;
   border-color: var(--apple-blue);
-  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 10px 20px -5px rgba(0, 113, 227, 0.4);
+}
+
+.quick-chip:active {
+  transform: scale(0.95);
+}
+
+/* Glass Card Overrides */
+.glass-card {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card:hover {
+  border-color: rgba(0, 113, 227, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1), 0 0 20px -5px rgba(0, 113, 227, 0.1);
+}
+
+.dark .glass-card:hover {
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 20px -5px rgba(0, 113, 227, 0.2);
+}
+
+/* Shimmer Effect */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  top: -150%;
+  left: -150%;
+  width: 300%;
+  height: 300%;
+  background: linear-gradient(45deg,
+      transparent 45%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 55%);
+  transform: rotate(45deg);
+  transition: all 0.6s ease;
+  pointer-events: none;
+}
+
+.shimmer:hover::after {
+  top: -50%;
+  left: -50%;
+}
+
+.dark .shimmer::after {
+  background: linear-gradient(45deg,
+      transparent 45%,
+      rgba(255, 255, 255, 0.05) 50%,
+      transparent 55%);
+}
+
+/* Tooltip-like dropdown appearance */
+#deviceDropdown {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform-origin: top center;
+}
+
+#deviceDropdown.hidden {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  display: none !important;
+}
+
+#deviceDropdown:not(.hidden) {
+  display: block !important;
+  animation: dropdown-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Responsive Grid Adjustments */
 @media (max-width: 768px) {
-  .md\:col-span-7, .md\:col-span-12, .md\:col-span-5 {
+
+  .md\:col-span-7,
+  .md\:col-span-12,
+  .md\:col-span-5 {
     grid-column: span 12 / span 12;
   }
 }

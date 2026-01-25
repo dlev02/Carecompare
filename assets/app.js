@@ -1,13 +1,66 @@
-import { DEVICE_CATALOG, POPULAR, findDeviceByNameOrId, currency } from './devices.js';
+// AppleCare+ Pricing & Calculator Logic - Updated Jan 2026
 
-// Bundle model (demo): up to 3 devices for $19.99/mo; extras +$5.99 each.
+const DEVICE_CATALOG = [
+  // iPhone (with Theft & Loss)
+  { id: 'iphone-17-pro-max', name: 'iPhone 17 Pro Max', category: 'iPhone', monthly: 13.99, annual: 139.99, theftLossIncluded: true },
+  { id: 'iphone-17-pro', name: 'iPhone 17 Pro', category: 'iPhone', monthly: 13.99, annual: 139.99, theftLossIncluded: true },
+  { id: 'iphone-17-plus', name: 'iPhone 17 Plus', category: 'iPhone', monthly: 12.99, annual: 129.99, theftLossIncluded: true },
+  { id: 'iphone-17', name: 'iPhone 17', category: 'iPhone', monthly: 10.49, annual: 104.99, theftLossIncluded: true },
+  { id: 'iphone-16-pro-max', name: 'iPhone 16 Pro Max', category: 'iPhone', monthly: 13.99, annual: 139.99, theftLossIncluded: true },
+  { id: 'iphone-16-pro', name: 'iPhone 16 Pro', category: 'iPhone', monthly: 13.99, annual: 139.99, theftLossIncluded: true },
+  { id: 'iphone-16-plus', name: 'iPhone 16 Plus', category: 'iPhone', monthly: 12.99, annual: 129.99, theftLossIncluded: true },
+  { id: 'iphone-16', name: 'iPhone 16', category: 'iPhone', monthly: 11.99, annual: 119.99, theftLossIncluded: true },
+
+  // Mac 
+  { id: 'mac-mini-m4', name: 'Mac mini (M4/M4 Pro)', category: 'Mac', monthly: 3.49, annual: 34.99 },
+  { id: 'imac-m4', name: 'iMac (M4)', category: 'Mac', monthly: 5.99, annual: 59.99 },
+  { id: 'macbook-pro-14-m4', name: 'MacBook Pro 14" (M4)', category: 'Mac', monthly: 9.99, annual: 99.99 },
+  { id: 'macbook-pro-16-m4', name: 'MacBook Pro 16" (M4)', category: 'Mac', monthly: 14.99, annual: 149.99 },
+  { id: 'mac-studio', name: 'Mac Studio', category: 'Mac', monthly: 5.99, annual: 59.99 },
+  { id: 'mac-pro', name: 'Mac Pro', category: 'Mac', monthly: 17.99, annual: 179.99 },
+  { id: 'macbook-air-13', name: 'MacBook Air 13"', category: 'Mac', monthly: 6.99, annual: 69.99 },
+  { id: 'macbook-air-15', name: 'MacBook Air 15"', category: 'Mac', monthly: 7.99, annual: 79.99 },
+
+  // iPad
+  { id: 'ipad-pro-11-m5', name: 'iPad Pro 11" (M5)', category: 'iPad', monthly: 9.99, annual: 99.99, theftLossIncluded: true },
+  { id: 'ipad-pro-13-m5', name: 'iPad Pro 13" (M5)', category: 'iPad', monthly: 10.99, annual: 109.99, theftLossIncluded: true },
+  { id: 'ipad-air-11-m4', name: 'iPad Air 11" (M4)', category: 'iPad', monthly: 5.99, annual: 59.99, theftLossIncluded: true },
+  { id: 'ipad-air-13-m4', name: 'iPad Air 13" (M4)', category: 'iPad', monthly: 6.99, annual: 69.99, theftLossIncluded: true },
+  { id: 'ipad-mini-m4', name: 'iPad mini (M4)', category: 'iPad', monthly: 4.99, annual: 49.99, theftLossIncluded: true },
+  { id: 'ipad', name: 'iPad', category: 'iPad', monthly: 4.99, annual: 49.99, theftLossIncluded: true },
+
+  // Watch
+  { id: 'watch-series-11', name: 'Apple Watch Series 11', category: 'Watch', monthly: 4.99, annual: 49.99, theftLossIncluded: true },
+  { id: 'watch-ultra-3', name: 'Apple Watch Ultra 3', category: 'Watch', monthly: 5.99, annual: 59.99, theftLossIncluded: true },
+  { id: 'watch-se-3', name: 'Apple Watch SE (3rd Gen)', category: 'Watch', monthly: 2.99, annual: 29.99, theftLossIncluded: true },
+  { id: 'watch-hermes-11', name: 'Apple Watch Hermès 11', category: 'Watch', monthly: 5.99, annual: 59.99, theftLossIncluded: true },
+
+  // Displays & Audio
+  { id: 'studio-display', name: 'Apple Studio Display', category: 'Display', monthly: 4.99, annual: 49.99 },
+  { id: 'pro-display-xdr', name: 'Pro Display XDR', category: 'Display', monthly: 17.99, annual: 179.99 },
+  { id: 'airpods-pro-3', name: 'AirPods Pro (3rd Gen)', category: 'Audio', monthly: 1.49, annual: 14.99 },
+  { id: 'airpods-4', name: 'AirPods 4', category: 'Audio', monthly: 1.49, annual: 14.99 },
+  { id: 'airpods-max-2', name: 'AirPods Max (2nd Gen)', category: 'Audio', monthly: 2.99, annual: 29.99 },
+  { id: 'apple-tv-4k', name: 'Apple TV 4K', category: 'Home', monthly: 0.83, annual: 9.99 },
+  { id: 'homepod-2', name: 'HomePod (2nd Gen)', category: 'Home', monthly: 1.67, annual: 19.99 },
+  { id: 'apple-vision-pro', name: 'Apple Vision Pro', category: 'Vision', monthly: 24.99, annual: 249.99 },
+];
+
+const POPULAR = ['iphone-17-pro', 'macbook-pro-14-m4', 'watch-series-11', 'airpods-pro-3', 'apple-vision-pro'];
+
+// Helper for currency formatting
+function currency(amount) {
+  if (Number.isNaN(amount) || amount == null) return '$0.00';
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+}
+
+// Bundle model: up to 3 devices for $19.99/mo; extras +$5.99 each.
 const BUNDLE_BASE_INCLUDED = 3;
 const BUNDLE_BASE_PRICE = 19.99;
 const BUNDLE_EXTRA_PRICE = 5.99;
 
 const els = {
   deviceSearch: document.getElementById('deviceSearch'),
-  // deviceOptions removed in favor of custom dropdown
   deviceQty: document.getElementById('deviceQty'),
   addDeviceBtn: document.getElementById('addDeviceBtn'),
   deviceDropdown: document.getElementById('deviceDropdown'),
@@ -15,76 +68,135 @@ const els = {
   emptyState: document.getElementById('emptyState'),
   quickAddChips: document.getElementById('quickAddChips'),
   individualMonthly: document.getElementById('individualMonthly'),
-  individualAnnual: document.getElementById('individualAnnual'),
   bundleMonthly: document.getElementById('bundleMonthly'),
-  bundleAnnual: document.getElementById('bundleAnnual'),
   bundleDetails: document.getElementById('bundleDetails'),
   savingsCallout: document.getElementById('savingsCallout'),
   savingsHeadline: document.getElementById('savingsHeadline'),
   savingsDetail: document.getElementById('savingsDetail'),
   themeToggle: document.getElementById('themeToggle'),
+  categoryGrid: document.getElementById('categoryGrid'),
+  clearAllBtn: document.getElementById('clearAllBtn'),
+  copyBtn: document.getElementById('copyBtn'),
 };
+
+// Toast system
+function toast(msg, icon = '✅') {
+  let t = document.getElementById('app-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'app-toast';
+    t.className = 'toast';
+    document.body.appendChild(t);
+  }
+  t.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
 
 // App state
 let basket = [];
 let dropdownState = { open: false, items: [], highlighted: -1 };
 
 function init() {
-
   // Quick add chips
-  for (const id of POPULAR) {
-    const dev = DEVICE_CATALOG.find(d => d.id === id);
-    if (!dev) continue;
-    const chip = document.createElement('button');
-    chip.className = 'quick-chip px-4 py-2 rounded-full border border-slate-200 bg-white shadow-sm text-xs font-bold transition-all hover:scale-105 active:scale-95 dark:border-white/10 dark:bg-white/5 dark:text-white';
-    chip.type = 'button';
-    chip.textContent = dev.name;
-    chip.addEventListener('click', () => addDevice(dev, 1));
-    els.quickAddChips.appendChild(chip);
-  }
+  const categoryIcons = {
+    'iPhone': '📱',
+    'Mac': '💻',
+    'Watch': '⌚',
+    'Audio': '🎧',
+    'Vision': '🥽',
+    'iPad': '🪄',
+    'Display': '🖥️',
+    'Home': '🏠'
+  };
 
-  // Bind add
-  els.addDeviceBtn.addEventListener('click', () => {
-    const query = els.deviceSearch.value;
+  POPULAR.forEach(id => {
+    const dev = DEVICE_CATALOG.find(d => d.id === id);
+    if (!dev) return;
+    const chip = document.createElement('button');
+    chip.className = 'quick-chip px-4 py-2 rounded-full border border-slate-200 bg-white shadow-sm text-xs font-bold transition-all hover:scale-105 active:scale-95 dark:border-white/10 dark:bg-white/5 dark:text-white flex items-center gap-2';
+
+    const icon = categoryIcons[dev.category] || '';
+    chip.innerHTML = `<span class="opacity-70">${icon}</span> ${dev.name}`;
+
+    chip.onclick = () => addDevice(dev, 1);
+    els.quickAddChips.appendChild(chip);
+  });
+
+  // Category Grid
+  const categories = [
+    { name: 'iPhone', icon: '📱', color: 'bg-blue-50 dark:bg-blue-500/10' },
+    { name: 'Mac', icon: '💻', color: 'bg-slate-50 dark:bg-white/5' },
+    { name: 'iPad', icon: '🪄', color: 'bg-purple-50 dark:bg-purple-500/10' },
+    { name: 'Watch', icon: '⌚', color: 'bg-red-50 dark:bg-red-500/10' },
+    { name: 'Audio', icon: '🎧', color: 'bg-green-50 dark:bg-green-500/10' },
+    { name: 'Vision', icon: '🥽', color: 'bg-indigo-50 dark:bg-indigo-500/10' },
+  ];
+
+  categories.forEach(cat => {
+    const card = document.createElement('button');
+    card.className = `group shimmer flex flex-col items-center justify-center p-4 rounded-2xl border border-transparent transition-all hover:border-blue-500/30 hover:shadow-premium dark:hover:border-blue-400/30 ${cat.color}`;
+    card.innerHTML = `
+      <div class="text-3xl mb-2 transition-transform group-hover:scale-110">${cat.icon}</div>
+      <div class="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">${cat.name}</div>
+    `;
+    card.onclick = () => {
+      els.deviceSearch.value = cat.name;
+      els.deviceSearch.focus();
+      onSearchInput();
+    };
+    els.categoryGrid.appendChild(card);
+  });
+
+  // Search Logic
+  els.deviceSearch.oninput = onSearchInput;
+  els.deviceSearch.onfocus = onSearchInput;
+  els.deviceSearch.onkeydown = onSearchKeyDown;
+
+  els.addDeviceBtn.onclick = () => {
+    const query = els.deviceSearch.value.trim();
+    if (!query) return;
     const qty = Math.max(1, parseInt(els.deviceQty.value || '1', 10));
-    const device = findDeviceByNameOrId(query);
+    const device = DEVICE_CATALOG.find(d => d.name.toLowerCase() === query.toLowerCase())
+      || DEVICE_CATALOG.find(d => d.name.toLowerCase().includes(query.toLowerCase()));
     if (device) {
       addDevice(device, qty);
       els.deviceSearch.value = '';
       els.deviceQty.value = '1';
-    } else {
-      els.deviceSearch.focus();
-      els.deviceSearch.select();
-    }
-  });
-
-  els.deviceSearch.addEventListener('input', onSearchInput);
-  els.deviceSearch.addEventListener('focus', onSearchInput);
-  els.deviceSearch.addEventListener('keydown', onSearchKeyDown);
-  document.addEventListener('click', (e) => {
-    if (!els.deviceDropdown.contains(e.target) && e.target !== els.deviceSearch) {
       closeDropdown();
     }
-  });
+  };
 
-  // Theme: Tailwind dark mode toggle
-  applyInitialTheme();
-  els.themeToggle.addEventListener('click', () => {
-    const isDark = document.documentElement.classList.contains('dark');
-    const next = isDark ? 'light' : 'dark';
+  document.onclick = (e) => {
+    if (!els.deviceDropdown.contains(e.target) && e.target !== els.deviceSearch) closeDropdown();
+  };
+
+  els.themeToggle.onclick = () => {
+    const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
     applyTheme(next);
-    try { localStorage.setItem('theme', next); } catch { }
-    // trigger subtle icon animation
-    try {
-      els.themeToggle.classList.remove('theme-burst');
-      // reflow
-      void els.themeToggle.offsetWidth;
-      els.themeToggle.classList.add('theme-burst');
-      setTimeout(() => els.themeToggle.classList.remove('theme-burst'), 400);
-    } catch { }
-  });
+  };
 
+  els.clearAllBtn.onclick = () => {
+    basket = [];
+    render();
+    toast('List cleared', '🗑️');
+  };
+
+  els.copyBtn.onclick = () => {
+    const t = computeTotals(basket);
+    const summary = `AppleCare Savings: I'm saving ${currency(t.individualAnnual - t.bundleAnnual)}/yr with AppleCare One for ${t.totalQty} devices!`;
+    navigator.clipboard.writeText(summary).then(() => {
+      toast('Summary copied to clipboard');
+    });
+  };
+
+  applyTheme(localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
   render();
+}
+
+function applyTheme(mode) {
+  document.documentElement.classList.toggle('dark', mode === 'dark');
+  localStorage.setItem('theme', mode);
 }
 
 function addDevice(device, qty) {
@@ -94,277 +206,128 @@ function addDevice(device, qty) {
   } else {
     basket.push({ id: device.id, qty });
   }
+  toast(`${device.name} added`);
   render();
 }
 
-function removeDevice(id) {
-  basket = basket.filter(x => x.id !== id);
-  render();
-}
-
-function changeQty(id, delta) {
-  const row = basket.find(x => x.id === id);
-  if (!row) return;
-  row.qty = Math.max(0, row.qty + delta);
-  if (row.qty === 0) {
-    removeDevice(id);
-  } else {
-    render();
-  }
-}
-
-function computeTotals(items) {
-  let individualMonthly = 0;
-  let individualAnnual = 0;
-
-  for (const item of items) {
-    const dev = DEVICE_CATALOG.find(d => d.id === item.id);
-    if (!dev) continue;
-    individualMonthly += (dev.monthly || 0) * item.qty;
-    individualAnnual += (dev.annual || 0) * item.qty;
-  }
-
-  const totalQty = items.reduce((s, x) => s + x.qty, 0);
-  const extra = Math.max(0, totalQty - BUNDLE_BASE_INCLUDED);
-  const bundleMonthly = (totalQty === 0) ? 0 : (BUNDLE_BASE_PRICE + extra * BUNDLE_EXTRA_PRICE);
-  const bundleAnnual = bundleMonthly * 12;
-
-  return { individualMonthly, individualAnnual, bundleMonthly, bundleAnnual, totalQty, extra };
-}
-
-function renderList(items) {
+function render() {
   els.deviceList.innerHTML = '';
-  if (items.length === 0) {
-    els.emptyState.hidden = false;
-    els.deviceList.hidden = true;
-    return;
-  }
-  els.emptyState.hidden = true;
-  els.deviceList.hidden = false;
+  const hasItems = basket.length > 0;
+  els.emptyState.classList.toggle('hidden', hasItems);
+  els.deviceList.classList.toggle('hidden', !hasItems);
+  els.deviceList.hidden = !hasItems;
+  els.clearAllBtn.classList.toggle('hidden', !hasItems);
 
-  for (const item of items) {
+  let indMonthly = 0;
+  let indAnnual = 0;
+  let totalQty = 0;
+
+  basket.forEach(item => {
     const dev = DEVICE_CATALOG.find(d => d.id === item.id);
-    if (!dev) continue;
+    if (!dev) return;
+    indMonthly += dev.monthly * item.qty;
+    indAnnual += dev.annual * item.qty;
+    totalQty += item.qty;
+
     const row = document.createElement('div');
-    row.className = 'animate-in flex items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50/50 p-4 transition-all hover:bg-white dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10';
-
-    const info = document.createElement('div');
-    info.className = 'flex-1 min-w-0';
-
-    const name = document.createElement('div');
-    name.className = 'font-bold text-sm truncate';
-    name.textContent = dev.name;
-
-    const meta = document.createElement('div');
-    meta.className = 'text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-0.5';
-    meta.textContent = `${dev.category} • ${currency(dev.monthly)}/mo`;
-
-    info.append(name, meta);
-
-    const controls = document.createElement('div');
-    controls.className = 'flex items-center gap-3';
-
-    const qtyWrap = document.createElement('div');
-    qtyWrap.className = 'flex items-center bg-white dark:bg-white/10 rounded-xl border border-slate-200 dark:border-white/10 px-1 py-1 shadow-sm';
-
-    const btnClass = 'flex h-6 w-6 items-center justify-center rounded-lg text-xs font-bold transition-all hover:bg-slate-100 dark:hover:bg-white/20 active:scale-90';
-
-    const minus = document.createElement('button');
-    minus.className = btnClass;
-    minus.innerHTML = '−';
-    minus.onclick = () => changeQty(item.id, -1);
-
-    const count = document.createElement('span');
-    count.className = 'px-3 text-xs font-bold';
-    count.textContent = item.qty;
-
-    const plus = document.createElement('button');
-    plus.className = btnClass;
-    plus.innerHTML = '+';
-    plus.onclick = () => changeQty(item.id, 1);
-
-    qtyWrap.append(minus, count, plus);
-
-    const del = document.createElement('button');
-    del.className = 'group flex h-8 w-8 items-center justify-center rounded-xl bg-red-50 text-red-500 transition-all hover:bg-red-500 hover:text-white dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500 dark:hover:text-white';
-    del.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" /></svg>';
-    del.onclick = () => removeDevice(item.id);
-
-    controls.append(qtyWrap, del);
-    row.append(info, controls);
+    row.className = 'animate-in flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50/50 p-4 dark:border-white/5 dark:bg-white/5';
+    row.innerHTML = `
+      <div class="flex-1 min-w-0">
+        <div class="font-bold text-sm truncate">${dev.name}</div>
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-0.5">${currency(dev.monthly)}/mo</div>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <div class="flex items-center bg-white dark:bg-white/10 rounded-xl border border-slate-200 dark:border-white/10 p-1 shadow-sm">
+          <button class="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-white/10" onclick="__APP__.changeQty('${item.id}', -1)">−</button>
+          <span class="px-2 text-xs font-bold">${item.qty}</span>
+          <button class="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-white/10" onclick="__APP__.changeQty('${item.id}', 1)">+</button>
+        </div>
+        <button class="h-8 w-8 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white dark:bg-red-500/10 dark:text-red-400" onclick="__APP__.remove('${item.id}')">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    `;
     els.deviceList.appendChild(row);
-  }
-}
+  });
 
-function renderTotals() {
-  const t = computeTotals(basket);
-  els.individualMonthly.textContent = currency(t.individualMonthly);
-  els.individualAnnual.textContent = currency(t.individualAnnual);
-  els.bundleMonthly.textContent = currency(t.bundleMonthly);
-  els.bundleAnnual.textContent = currency(t.bundleAnnual);
+  const extra = Math.max(0, totalQty - BUNDLE_BASE_INCLUDED);
+  const bundleMonthly = hasItems ? (BUNDLE_BASE_PRICE + extra * BUNDLE_EXTRA_PRICE) : 0;
 
-  const breakdown = [];
-  if (t.extra > 0) {
-    els.bundleDetails.textContent = `${t.extra} extra × ${currency(BUNDLE_EXTRA_PRICE)}/mo`;
-  } else {
-    els.bundleDetails.textContent = '';
-  }
+  els.individualMonthly.textContent = currency(indMonthly);
+  els.bundleMonthly.textContent = currency(bundleMonthly);
+  els.bundleDetails.textContent = extra > 0 ? `${extra} additional × ${currency(BUNDLE_EXTRA_PRICE)}` : '';
 
-  const annualSavings = t.individualAnnual - t.bundleAnnual;
-  if (annualSavings > 0.009) {
-    els.savingsCallout.hidden = false; // ensure attribute isn't set
+  const annualSavings = indAnnual - (bundleMonthly * 12);
+  if (annualSavings > 1) {
     els.savingsCallout.classList.remove('hidden');
-    els.savingsHeadline.textContent = `You save ${currency(annualSavings)}/yr`;
-    els.savingsDetail.textContent = `Compared to buying AppleCare individually for the same devices.`;
+    els.savingsHeadline.textContent = `Save ${currency(annualSavings)}/yr 🎉`;
+    els.savingsDetail.textContent = `You're getting more value with AppleCare One.`;
   } else {
-    els.savingsCallout.hidden = true;
     els.savingsCallout.classList.add('hidden');
   }
 }
 
-function render() {
-  renderList(basket);
-  renderTotals();
-}
-
-// Expose a simple API for debugging
-window.__APP__ = {
-  addDeviceById: (id, qty = 1) => {
-    const dev = DEVICE_CATALOG.find(d => d.id === id);
-    if (dev) addDevice(dev, qty);
-  }
-};
-
-document.addEventListener('DOMContentLoaded', init);
-
-function applyInitialTheme() {
-  // Follow system theme by default; respect previous explicit user choice
-  let mode = null;
-  try { mode = localStorage.getItem('theme'); } catch { }
-  if (mode !== 'light' && mode !== 'dark') {
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    mode = prefersDark ? 'dark' : 'light';
-  }
-  applyTheme(mode);
-  // Listen for system changes and update when user hasn't explicitly chosen
-  const mq = window.matchMedia('(prefers-color-scheme: dark)');
-  if (mq && mq.addEventListener) {
-    mq.addEventListener('change', (e) => {
-      let explicit = null;
-      try { explicit = localStorage.getItem('theme'); } catch { }
-      if (explicit === 'light' || explicit === 'dark') return;
-      applyTheme(e.matches ? 'dark' : 'light');
-    });
-  }
-}
-
-function applyTheme(mode) {
-  const root = document.documentElement;
-  if (mode === 'dark') {
-    root.classList.add('dark');
-  } else {
-    root.classList.remove('dark');
-  }
-}
-
-// ----- Custom search dropdown -----
 function onSearchInput() {
   const q = els.deviceSearch.value.trim().toLowerCase();
-  const items = (q ? DEVICE_CATALOG.filter(d => d.name.toLowerCase().includes(q) || d.category.toLowerCase().includes(q)) : DEVICE_CATALOG).slice(0, 12);
+  const items = (q ? DEVICE_CATALOG.filter(d => d.name.toLowerCase().includes(q)) : DEVICE_CATALOG).slice(0, 10);
   dropdownState.items = items;
   dropdownState.highlighted = items.length ? 0 : -1;
-  if (!items.length) { closeDropdown(); return; }
-  openDropdown();
   renderDropdown();
-}
-
-function onSearchKeyDown(e) {
-  if (e.key === 'Enter') {
-    if (dropdownState.open && dropdownState.highlighted >= 0) {
-      selectSuggestion(dropdownState.highlighted);
-      e.preventDefault();
-    } else {
-      // Trigger add if user pressed Enter without dropdown open
-      e.preventDefault();
-      document.getElementById('addDeviceBtn').click();
-    }
-    return;
-  }
-  if (!dropdownState.open && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
-    onSearchInput();
-    e.preventDefault();
-    return;
-  }
-  if (!dropdownState.open) return;
-  if (e.key === 'ArrowDown') {
-    dropdownState.highlighted = Math.min(dropdownState.items.length - 1, dropdownState.highlighted + 1);
-    updateHighlight();
-    e.preventDefault();
-  } else if (e.key === 'ArrowUp') {
-    dropdownState.highlighted = Math.max(0, dropdownState.highlighted - 1);
-    updateHighlight();
-    e.preventDefault();
-  } else if (e.key === 'Escape') {
-    closeDropdown();
-  }
 }
 
 function renderDropdown() {
   els.deviceDropdown.innerHTML = '';
-  for (let i = 0; i < dropdownState.items.length; i++) {
-    const d = dropdownState.items[i];
+  if (!dropdownState.items.length) { closeDropdown(); return; }
+  els.deviceDropdown.classList.remove('hidden');
+  dropdownState.items.forEach((d, i) => {
     const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-all hover:bg-slate-100 dark:hover:bg-white/10';
-    if (i === dropdownState.highlighted) btn.classList.add('bg-slate-100', 'dark:bg-white/10');
-
-    const left = document.createElement('div');
-    const title = document.createElement('div');
-    title.className = 'font-bold text-sm';
-    title.textContent = d.name;
-    const sub = document.createElement('div');
-    sub.className = 'text-[10px] font-bold text-slate-400 uppercase tracking-tighter';
-    sub.textContent = d.category;
-    left.append(title, sub);
-
-    const price = document.createElement('div');
-    price.className = 'text-xs font-bold text-blue-600 dark:text-blue-400';
-    price.textContent = `${currency(d.monthly)}/mo`;
-
-    btn.append(left, price);
-    btn.addEventListener('click', () => selectSuggestion(i));
+    btn.className = `flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-all ${i === dropdownState.highlighted ? 'bg-slate-100 dark:bg-white/10' : ''}`;
+    btn.innerHTML = `
+      <div>
+        <div class="font-bold text-sm dark:text-white">${d.name}</div>
+        <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">${d.category}</div>
+      </div>
+      <div class="text-xs font-bold text-blue-600 dark:text-blue-400">${currency(d.monthly)}<span class="opacity-60">/mo</span></div>
+    `;
+    btn.onclick = () => { els.deviceSearch.value = d.name; closeDropdown(); };
     els.deviceDropdown.appendChild(btn);
-  }
-}
-
-function updateHighlight() {
-  const children = Array.from(els.deviceDropdown.children);
-  children.forEach((el, idx) => {
-    el.classList.remove('bg-slate-100', 'dark:bg-slate-700');
-    if (idx === dropdownState.highlighted) {
-      el.classList.add('bg-slate-100', 'dark:bg-slate-700');
-      el.scrollIntoView({ block: 'nearest' });
-    }
   });
 }
 
-function selectSuggestion(index) {
-  const d = dropdownState.items[index];
-  if (!d) return;
-  els.deviceSearch.value = d.name;
-  closeDropdown();
-}
-
-function openDropdown() {
-  if (dropdownState.open) return;
-  dropdownState.open = true;
-  els.deviceDropdown.classList.remove('hidden');
+function onSearchKeyDown(e) {
+  if (e.key === 'Enter') {
+    if (dropdownState.highlighted >= 0) {
+      els.deviceSearch.value = dropdownState.items[dropdownState.highlighted].name;
+      closeDropdown();
+    } else els.addDeviceBtn.click();
+    e.preventDefault();
+  } else if (e.key === 'ArrowDown') {
+    dropdownState.highlighted = Math.min(dropdownState.items.length - 1, dropdownState.highlighted + 1);
+    renderDropdown();
+  } else if (e.key === 'ArrowUp') {
+    dropdownState.highlighted = Math.max(0, dropdownState.highlighted - 1);
+    renderDropdown();
+  } else if (e.key === 'Escape') closeDropdown();
 }
 
 function closeDropdown() {
-  if (!dropdownState.open) return;
-  dropdownState.open = false;
   els.deviceDropdown.classList.add('hidden');
+  dropdownState.highlighted = -1;
 }
 
+// Global debug/action helpers
+window.__APP__ = {
+  changeQty: (id, delta) => {
+    const item = basket.find(x => x.id === id);
+    if (!item) return;
+    item.qty = Math.max(0, item.qty + delta);
+    if (item.qty === 0) basket = basket.filter(x => x.id !== id);
+    render();
+  },
+  remove: (id) => {
+    basket = basket.filter(x => x.id !== id);
+    render();
+  }
+};
 
+document.addEventListener('DOMContentLoaded', init);
