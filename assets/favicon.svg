@@ -1,16 +1,25 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="shield_grad" x1="256" y1="40" x2="256" y2="472" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0071E3"/>
-      <stop offset="1" stop-color="#001529"/>
-    </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%" filterUnits="userSpaceOnUse">
-      <feGaussianBlur stdDeviation="15" result="blur"/>
-      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-    </filter>
-  </defs>
-  <path d="M256 40C180 40 100 80 60 120C60 280 100 400 256 472C412 400 452 280 452 120C412 80 332 40 256 40Z" fill="url(#shield_grad)"/>
-  <path d="M256 60C190 60 120 100 80 135C80 270 115 380 256 445C397 380 432 270 432 135C392 100 322 60 256 60Z" fill="white" fill-opacity="0.1"/>
-  <rect x="236" y="186" width="40" height="140" rx="8" fill="white" filter="url(#glow)"/>
-  <rect x="186" y="236" width="140" height="40" rx="8" fill="white" filter="url(#glow)"/>
+  <!-- Use a solid filled rect for the background to force full-bleed -->
+  <rect width="512" height="512" fill="#0071E3"/>
+  
+  <!-- Simple Linear Gradient Overlay for depth -->
+  <linearGradient id="g" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+    <stop stop-color="#00A3FF" stop-opacity="0.5"/>
+    <stop offset="1" stop-color="#001E3E" stop-opacity="0.5"/>
+  </linearGradient>
+  <rect width="512" height="512" fill="url(#g)"/>
+
+  <!-- Large, Bold Hammer Glyph -->
+  <!-- Centered, large scale to fill the visual space -->
+  <g transform="translate(256, 256) rotate(45)">
+    <g transform="translate(-140, -140) scale(1.1)">
+      <!-- Head -->
+      <rect x="60" y="0" width="160" height="100" rx="12" fill="white"/>
+      <!-- Handle -->
+      <rect x="110" y="100" width="60" height="180" rx="8" fill="white" fill-opacity="0.9"/>
+      
+      <!-- Cutout Details for Tech Feel -->
+      <path d="M125 35h30v30h-30z" fill="#0071E3"/>
+    </g>
+  </g>
 </svg>
