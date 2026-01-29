@@ -53,7 +53,7 @@ const POPULAR = ['iphone-17-pro', 'macbook-pro-14', 'watch-series-11', 'ipad-pro
 
 // Helper for currency formatting
 function currency(amount) {
-  if (Number.isNaN(amount) || amount == null) return '$0.00';
+  if (Number.isNaN(amount) || amount === null || amount === undefined) return '$0.00';
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 }
 
@@ -123,8 +123,9 @@ function init() {
     if (!dev) return;
     const chip = document.createElement('button');
     chip.className = 'quick-chip px-4 py-2 rounded-full border border-slate-200 bg-white shadow-sm text-xs font-bold transition-all hover:scale-105 active:scale-95 dark:border-white/10 dark:bg-white/5 dark:text-white flex items-center gap-2';
+    chip.setAttribute('aria-label', `Quick add ${dev.name}`);
     const icon = categoryIcons[dev.category] || '';
-    chip.innerHTML = `<span class="opacity-70">${icon}</span> ${dev.name}`;
+    chip.innerHTML = `<span class="opacity-70" aria-hidden="true">${icon}</span> ${dev.name}`;
     chip.onclick = (e) => { e.stopPropagation(); addDevice(dev, 1); };
     els.quickAddChips.appendChild(chip);
   });
@@ -274,9 +275,10 @@ function renderExplorerList(items) {
   items.forEach((d, i) => {
     const btn = document.createElement('button');
     btn.className = `flex w-full items-center justify-between rounded-2xl px-5 py-4 text-left transition-all ${i === explorerState.highlighted ? 'bg-blue-50 dark:bg-blue-500/10' : 'hover:bg-slate-50 dark:hover:bg-white/5'}`;
+    btn.setAttribute('aria-label', `Add ${d.name} - ${currency(d.monthly)} per month`);
     btn.innerHTML = `
       <div class="flex items-center gap-4 pointer-events-none">
-        <div class="h-10 w-10 rounded-xl bg-white dark:bg-white/5 flex items-center justify-center text-xl shadow-sm border border-slate-100 dark:border-white/5">
+        <div class="h-10 w-10 rounded-xl bg-white dark:bg-white/5 flex items-center justify-center text-xl shadow-sm border border-slate-100 dark:border-white/5" aria-hidden="true">
           ${getIcon(d.category)}
         </div>
         <div>
@@ -375,15 +377,17 @@ function render() {
   els.bundleMonthly.textContent = currency(totals.bundleMonthly);
   els.bundleDetails.textContent = totals.extra > 0 ? `+ ${totals.extra} additional × ${currency(BUNDLE_EXTRA_PRICE)}` : 'Incl. 3 devices';
 
-  // Calculate Tilt
+  // Calculate Tilt - Visual indicator of price comparison
   if (els.scaleContainer) {
     const diff = totals.individualMonthly - totals.bundleMonthly;
-    // Scale the tilt based on price ratio, maxing at +/- 12 degrees
+    const MAX_TILT_DEGREES = 18;
+    const TILT_MULTIPLIER = 35;
     let tilt = 0;
+
     if (totals.individualMonthly > 0) {
       const ratio = diff / Math.max(totals.individualMonthly, totals.bundleMonthly);
-      tilt = ratio * 35; // 35 degree base weighting for dramatic effect
-      tilt = Math.max(-18, Math.min(18, tilt));
+      tilt = ratio * TILT_MULTIPLIER;
+      tilt = Math.max(-MAX_TILT_DEGREES, Math.min(MAX_TILT_DEGREES, tilt));
     }
     els.scaleContainer.style.setProperty('--scale-tilt', `${tilt}deg`);
   }

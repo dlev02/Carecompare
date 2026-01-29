@@ -9,7 +9,6 @@
 .dark {
   --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.08);
-  --accent-gradient: linear-gradient(135deg, #0071e3, #6366f1);
 }
 
 /* Gradient Text */
