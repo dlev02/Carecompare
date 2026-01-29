@@ -165,23 +165,25 @@ function init() {
   els.deviceSearch.oninput = onSearch;
   els.deviceSearch.onkeydown = onKey;
 
-  let themeClickTimer = null;
-  els.themeToggle.onclick = () => {
-    if (themeClickTimer) {
-      // Double-click: reset to system theme
-      clearTimeout(themeClickTimer);
-      themeClickTimer = null;
+  let themeLongPress = null;
+  let themeLongFired = false;
+  els.themeToggle.onmousedown = els.themeToggle.ontouchstart = (e) => {
+    themeLongFired = false;
+    themeLongPress = setTimeout(() => {
+      themeLongFired = true;
       localStorage.removeItem('themeOverride');
       applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       toast('Following system theme', '🔄');
-      return;
-    }
-    themeClickTimer = setTimeout(() => {
-      themeClickTimer = null;
-      const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-      localStorage.setItem('themeOverride', 'true');
-      applyTheme(next);
-    }, 300);
+    }, 800);
+  };
+  els.themeToggle.onmouseup = els.themeToggle.onmouseleave = els.themeToggle.ontouchend = () => {
+    clearTimeout(themeLongPress);
+  };
+  els.themeToggle.onclick = (e) => {
+    if (themeLongFired) return;
+    const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+    localStorage.setItem('themeOverride', 'true');
+    applyTheme(next);
   };
 
   // Listen for system theme changes and follow them unless user manually toggled
