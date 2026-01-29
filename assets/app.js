@@ -165,10 +165,30 @@ function init() {
   els.deviceSearch.oninput = onSearch;
   els.deviceSearch.onkeydown = onKey;
 
+  let themeClickTimer = null;
   els.themeToggle.onclick = () => {
-    const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-    applyTheme(next);
+    if (themeClickTimer) {
+      // Double-click: reset to system theme
+      clearTimeout(themeClickTimer);
+      themeClickTimer = null;
+      localStorage.removeItem('themeOverride');
+      applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      toast('Following system theme', '🔄');
+      return;
+    }
+    themeClickTimer = setTimeout(() => {
+      themeClickTimer = null;
+      const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+      localStorage.setItem('themeOverride', 'true');
+      applyTheme(next);
+    }, 300);
   };
+
+  // Listen for system theme changes and follow them unless user manually toggled
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (localStorage.getItem('themeOverride')) return;
+    applyTheme(e.matches ? 'dark' : 'light');
+  });
 
   els.clearAllBtn.onclick = () => { basket = []; render(); toast('List cleared', '🗑️'); };
 
@@ -179,7 +199,12 @@ function init() {
     if (e.key === 'Escape' && explorerState.isOpen) closeExplorer();
   };
 
-  applyTheme(localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  // If user has manually chosen a theme, use it; otherwise follow system preference
+  if (localStorage.getItem('themeOverride')) {
+    applyTheme(localStorage.getItem('theme') || 'light');
+  } else {
+    applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  }
   render();
 }
 
