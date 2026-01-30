@@ -86,8 +86,23 @@ const els = {
   scaleContainer: document.getElementById('scaleContainer'),
 };
 
+// SVG icon library (Lucide-style, 24x24 viewBox)
+const ICONS = {
+  smartphone: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>',
+  laptop: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16"/></svg>',
+  tablet: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>',
+  watch: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="6"/><polyline points="12 10 12 12 13 13"/><path d="m16.13 7.66-.81-4.05a2 2 0 0 0-2-1.61h-2.68a2 2 0 0 0-2 1.61l-.78 4.05"/><path d="m7.88 16.36.8 4a2 2 0 0 0 2 1.61h2.72a2 2 0 0 0 2-1.61l.78-4.05"/></svg>',
+  headphones: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>',
+  glasses: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="15" r="4"/><circle cx="18" cy="15" r="4"/><path d="M14 15a2 2 0 0 0-4 0"/><path d="M2.5 13 5 7c.7-1.3 1.4-2 3-2"/><path d="M21.5 13 19 7c-.7-1.3-1.4-2-3-2"/></svg>',
+  monitor: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>',
+  home: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+  check: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  shieldCheck: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>',
+  scale: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>',
+};
+
 // Global system
-function toast(msg, icon = '✅') {
+function toast(msg) {
   let t = document.getElementById('app-toast');
   if (!t) {
     t = document.createElement('div');
@@ -95,7 +110,7 @@ function toast(msg, icon = '✅') {
     t.className = 'toast';
     document.body.appendChild(t);
   }
-  t.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
+  t.innerHTML = `<span class="toast-icon">${ICONS.check}</span> <span>${msg}</span>`;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
@@ -112,9 +127,9 @@ let explorerState = {
 
 function init() {
   const categoryIcons = {
-    'iPhone': '📱', 'Mac': '💻', 'Watch': '⌚',
-    'Audio': '🎧', 'Vision': '🥽', 'iPad': '🪄',
-    'Display': '🖥️', 'Home': '🏠'
+    'iPhone': ICONS.smartphone, 'Mac': ICONS.laptop, 'Watch': ICONS.watch,
+    'Audio': ICONS.headphones, 'Vision': ICONS.glasses, 'iPad': ICONS.tablet,
+    'Display': ICONS.monitor, 'Home': ICONS.home
   };
 
   // 1. Populate Popular Chips on landing
@@ -122,29 +137,29 @@ function init() {
     const dev = DEVICE_CATALOG.find(d => d.id === id);
     if (!dev) return;
     const chip = document.createElement('button');
-    chip.className = 'quick-chip px-4 py-2 rounded-full border border-slate-200 bg-white shadow-sm text-xs font-bold transition-all hover:scale-105 active:scale-95 dark:border-white/10 dark:bg-white/5 dark:text-white flex items-center gap-2';
+    chip.className = 'quick-chip cursor-pointer px-4 py-2 rounded-full border border-slate-200 bg-white shadow-sm text-xs font-bold transition-all active:scale-95 dark:border-white/10 dark:bg-white/5 dark:text-white flex items-center gap-2';
     chip.setAttribute('aria-label', `Quick add ${dev.name}`);
     const icon = categoryIcons[dev.category] || '';
-    chip.innerHTML = `<span class="opacity-70" aria-hidden="true">${icon}</span> ${dev.name}`;
+    chip.innerHTML = `<span class="w-4 h-4 opacity-70 flex items-center" aria-hidden="true">${icon}</span> ${dev.name}`;
     chip.onclick = (e) => { e.stopPropagation(); addDevice(dev, 1); };
     els.quickAddChips.appendChild(chip);
   });
 
   // 2. Populate Category Grid
   const categories = [
-    { name: 'iPhone', icon: '📱', color: 'bg-blue-50 dark:bg-blue-500/10' },
-    { name: 'Mac', icon: '💻', color: 'bg-slate-50 dark:bg-white/5' },
-    { name: 'iPad', icon: '🪄', color: 'bg-purple-50 dark:bg-purple-500/10' },
-    { name: 'Watch', icon: '⌚', color: 'bg-red-50 dark:bg-red-500/10' },
-    { name: 'Audio', icon: '🎧', color: 'bg-green-50 dark:bg-green-500/10' },
-    { name: 'Vision', icon: '🥽', color: 'bg-indigo-50 dark:bg-indigo-500/10' },
+    { name: 'iPhone', icon: ICONS.smartphone, color: 'bg-blue-50 dark:bg-blue-500/10' },
+    { name: 'Mac', icon: ICONS.laptop, color: 'bg-slate-50 dark:bg-white/5' },
+    { name: 'iPad', icon: ICONS.tablet, color: 'bg-purple-50 dark:bg-purple-500/10' },
+    { name: 'Watch', icon: ICONS.watch, color: 'bg-red-50 dark:bg-red-500/10' },
+    { name: 'Audio', icon: ICONS.headphones, color: 'bg-green-50 dark:bg-green-500/10' },
+    { name: 'Vision', icon: ICONS.glasses, color: 'bg-indigo-50 dark:bg-indigo-500/10' },
   ];
 
   categories.forEach(cat => {
     const card = document.createElement('button');
-    card.className = `group shimmer flex flex-col items-center justify-center p-4 rounded-2xl border border-transparent transition-all hover:border-blue-500/30 hover:shadow-premium dark:hover:border-blue-400/30 ${cat.color}`;
+    card.className = `group cursor-pointer shimmer flex flex-col items-center justify-center p-4 rounded-2xl border border-transparent transition-all hover:border-blue-500/30 hover:shadow-premium dark:hover:border-blue-400/30 ${cat.color}`;
     card.innerHTML = `
-      <div class="text-3xl mb-2 transition-transform group-hover:scale-110">${cat.icon}</div>
+      <div class="w-8 h-8 mb-2 text-slate-600 dark:text-slate-300 transition-transform group-hover:scale-110">${cat.icon}</div>
       <div class="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">${cat.name}</div>
     `;
     card.onclick = (e) => { e.stopPropagation(); drillDown(cat.name); };
@@ -174,7 +189,7 @@ function init() {
       themeLongFired = true;
       localStorage.removeItem('themeOverride');
       applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-      toast('Following system theme', '🔄');
+      toast('Following system theme');
     }, 800);
   };
   els.themeToggle.onmouseup = els.themeToggle.onmouseleave = els.themeToggle.ontouchend = () => {
@@ -193,7 +208,7 @@ function init() {
     applyTheme(e.matches ? 'dark' : 'light');
   });
 
-  els.clearAllBtn.onclick = () => { basket = []; render(); toast('List cleared', '🗑️'); };
+  els.clearAllBtn.onclick = () => { basket = []; render(); toast('List cleared'); };
 
 
   // Keyboard: Command + K and Escape
@@ -274,11 +289,11 @@ function renderExplorerList(items) {
 
   items.forEach((d, i) => {
     const btn = document.createElement('button');
-    btn.className = `flex w-full items-center justify-between rounded-2xl px-5 py-4 text-left transition-all ${i === explorerState.highlighted ? 'bg-blue-50 dark:bg-blue-500/10' : 'hover:bg-slate-50 dark:hover:bg-white/5'}`;
+    btn.className = `cursor-pointer flex w-full items-center justify-between rounded-2xl px-5 py-4 text-left transition-all ${i === explorerState.highlighted ? 'bg-blue-50 dark:bg-blue-500/10' : 'hover:bg-slate-50 dark:hover:bg-white/5'}`;
     btn.setAttribute('aria-label', `Add ${d.name} - ${currency(d.monthly)} per month`);
     btn.innerHTML = `
       <div class="flex items-center gap-4 pointer-events-none">
-        <div class="h-10 w-10 rounded-xl bg-white dark:bg-white/5 flex items-center justify-center text-xl shadow-sm border border-slate-100 dark:border-white/5" aria-hidden="true">
+        <div class="h-10 w-10 rounded-xl bg-white dark:bg-white/5 flex items-center justify-center shadow-sm border border-slate-100 dark:border-white/5 text-slate-500 dark:text-slate-400 [&>svg]:w-5 [&>svg]:h-5" aria-hidden="true">
           ${getIcon(d.category)}
         </div>
         <div>
@@ -298,16 +313,16 @@ function renderExplorerList(items) {
 
 function getIcon(cat) {
   const mapping = {
-    'iPhone': '📱',
-    'Mac': '💻',
-    'Watch': '⌚',
-    'Audio': '🎧',
-    'Vision': '🥽',
-    'iPad': '🪄',
-    'Display': '🖥️',
-    'Home': '🏠'
+    'iPhone': ICONS.smartphone,
+    'Mac': ICONS.laptop,
+    'Watch': ICONS.watch,
+    'Audio': ICONS.headphones,
+    'Vision': ICONS.glasses,
+    'iPad': ICONS.tablet,
+    'Display': ICONS.monitor,
+    'Home': ICONS.home
   };
-  return mapping[cat] || '';
+  return mapping[cat] || '';
 }
 
 function onKey(e) {
@@ -360,11 +375,11 @@ function render() {
       </div>
       <div class="flex items-center gap-2">
         <div class="flex items-center bg-white dark:bg-white/10 rounded-xl border border-slate-200 dark:border-white/10 p-1">
-          <button class="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-white/10" onclick="__APP__.changeQty('${item.id}', -1)">−</button>
+          <button class="cursor-pointer w-6 h-6 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-white/10" onclick="__APP__.changeQty('${item.id}', -1)">−</button>
           <span class="px-2 text-xs font-bold">${item.qty}</span>
-          <button class="w-6 h-6 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-white/10" onclick="__APP__.changeQty('${item.id}', 1)">+</button>
+          <button class="cursor-pointer w-6 h-6 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-white/10" onclick="__APP__.changeQty('${item.id}', 1)">+</button>
         </div>
-        <button class="h-8 w-8 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white dark:bg-red-500/10" onclick="__APP__.remove('${item.id}')">
+        <button class="cursor-pointer h-8 w-8 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white dark:bg-red-500/10" onclick="__APP__.remove('${item.id}')">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
@@ -402,7 +417,7 @@ function render() {
     els.savingsCallout.classList.add('bg-green-500', 'dark:bg-green-600');
 
     const display_savings = Math.max(annual_savings, diff_monthly * 12);
-    els.savingsHeadline.textContent = `Save ${currency(display_savings)}/yr 🎉`;
+    els.savingsHeadline.textContent = `Save ${currency(display_savings)}/yr`;
     els.savingsDetail.textContent = `You're getting more value with AppleCare One.`;
   } else if (diff_monthly < -0.01) {
     // Individual is cheaper
