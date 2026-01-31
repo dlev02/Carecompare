@@ -101,6 +101,101 @@ const ICONS = {
   scale: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>',
 };
 
+// Typewriter effect for search placeholder
+const TypewriterEffect = (() => {
+  const PHRASES = [
+    'Search for iPhone 17 Pro...',
+    'Compare AppleCare+ plans...',
+    'Find your Mac...',
+    'How much is Apple Watch coverage?',
+    'Add your iPad Pro...',
+    'Calculate your bundle savings...',
+  ];
+
+  const TYPE_SPEED = 60;
+  const BACKSPACE_SPEED = 30;
+  const PAUSE_END = 2000;
+  const PAUSE_BETWEEN = 500;
+  const INITIAL_DELAY = 1000;
+
+  let textEl = null;
+  let cursorEl = null;
+  let phraseIndex = 0;
+  let charIndex = 0;
+  let isDeleting = false;
+  let timeoutId = null;
+  let isRunning = false;
+
+  const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function start() {
+    textEl = document.getElementById('typewriterText');
+    cursorEl = document.getElementById('typewriterCursor');
+    if (!textEl) return;
+
+    if (reducedMotionQuery.matches) {
+      textEl.textContent = 'Search for a device or browse categories...';
+      if (cursorEl) cursorEl.style.display = 'none';
+      return;
+    }
+
+    charIndex = textEl.textContent.length;
+    isRunning = true;
+    timeoutId = setTimeout(tick, INITIAL_DELAY);
+
+    reducedMotionQuery.addEventListener('change', (e) => {
+      if (e.matches) {
+        stop();
+        textEl.textContent = 'Search for a device or browse categories...';
+        if (cursorEl) cursorEl.style.display = 'none';
+      } else {
+        if (cursorEl) cursorEl.style.display = '';
+        isRunning = true;
+        tick();
+      }
+    });
+  }
+
+  function stop() {
+    isRunning = false;
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+  }
+
+  function tick() {
+    if (!isRunning || !textEl) return;
+
+    const currentPhrase = PHRASES[phraseIndex];
+
+    if (!isDeleting) {
+      charIndex++;
+      textEl.textContent = currentPhrase.substring(0, charIndex);
+
+      if (charIndex === currentPhrase.length) {
+        isDeleting = true;
+        timeoutId = setTimeout(tick, PAUSE_END);
+      } else {
+        timeoutId = setTimeout(tick, TYPE_SPEED);
+      }
+    } else {
+      charIndex--;
+      textEl.textContent = currentPhrase.substring(0, charIndex);
+
+      if (charIndex === 0) {
+        isDeleting = false;
+        phraseIndex = (phraseIndex + 1) % PHRASES.length;
+        timeoutId = setTimeout(tick, PAUSE_BETWEEN);
+      } else {
+        timeoutId = setTimeout(tick, BACKSPACE_SPEED);
+      }
+    }
+  }
+
+  return { start, stop };
+})();
+
 // Global system
 function toast(msg) {
   let t = document.getElementById('app-toast');
@@ -223,6 +318,7 @@ function init() {
   } else {
     applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   }
+  TypewriterEffect.start();
   render();
 }
 

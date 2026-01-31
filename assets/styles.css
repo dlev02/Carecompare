@@ -398,6 +398,69 @@ body.no-scroll {
   }
 }
 
+/* Typewriter Cursor */
+.typewriter-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background-color: #94a3b8;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  animation: cursor-blink 1s step-end infinite;
+}
+
+.dark .typewriter-cursor {
+  background-color: #64748b;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Search bar animated gradient border on hover */
+@property --search-border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+#searchTrigger::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--search-border-angle, 0deg),
+    transparent 0%,
+    transparent 70%,
+    rgba(0, 113, 227, 0.4) 85%,
+    rgba(0, 113, 227, 0.6) 90%,
+    rgba(0, 113, 227, 0.4) 95%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+#searchTrigger:hover::before {
+  opacity: 1;
+  animation: search-border-rotate 3s linear infinite;
+}
+
+@keyframes search-border-rotate {
+  to {
+    --search-border-angle: 360deg;
+  }
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .balance-scale-container {
@@ -433,5 +496,14 @@ body.no-scroll {
 
   .toast {
     transition-duration: 0.01ms;
+  }
+
+  .typewriter-cursor {
+    animation: none;
+    display: none;
+  }
+
+  #searchTrigger::before {
+    animation: none;
   }
 }
