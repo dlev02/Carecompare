@@ -139,9 +139,10 @@ const TypewriterEffect = (() => {
       return;
     }
 
-    charIndex = textEl.textContent.length;
+    charIndex = PHRASES[phraseIndex].length;
+    isDeleting = true;
     isRunning = true;
-    timeoutId = setTimeout(tick, INITIAL_DELAY);
+    timeoutId = setTimeout(tick, PAUSE_END);
 
     reducedMotionQuery.addEventListener('change', (e) => {
       if (e.matches) {
