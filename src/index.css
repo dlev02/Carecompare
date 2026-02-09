@@ -14,45 +14,38 @@
   --color-white: #ffffff;
   --color-black: #000000;
 
-  /* Design 1: Glass Aurora */
-  --color-aurora-purple: #a855f7;
-  --color-aurora-blue: #3b82f6;
-  --color-aurora-cyan: #06b6d4;
-  --color-aurora-pink: #ec4899;
-  --color-glass-bg: rgba(255, 255, 255, 0.08);
-  --color-glass-border: rgba(255, 255, 255, 0.15);
-  --color-glass-bg-light: rgba(0, 0, 0, 0.03);
-  --color-glass-border-light: rgba(0, 0, 0, 0.08);
-
-  /* Design 2: Minimal Black */
-  --color-minimal-bg: #0a0a0a;
-  --color-minimal-surface: #141414;
-  --color-minimal-text: #fafafa;
-  --color-minimal-muted: #737373;
-  --color-minimal-accent: #22d3ee;
-  --color-minimal-accent-glow: rgba(34, 211, 238, 0.4);
-
-  /* Design 3: Playful Gradient */
-  --color-playful-orange: #f97316;
-  --color-playful-pink: #ec4899;
-  --color-playful-violet: #8b5cf6;
-  --color-playful-yellow: #facc15;
-  --color-playful-green: #22c55e;
-
-  /* Semantic Colors */
-  --color-success: #22c55e;
-  --color-savings: #10b981;
-
-  /* Shadows */
-  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.12);
-  --shadow-elevated: 0 20px 60px rgba(0, 0, 0, 0.3);
-  --shadow-glow-cyan: 0 0 60px rgba(6, 182, 212, 0.3);
-  --shadow-glow-accent: 0 0 40px var(--color-minimal-accent-glow);
-
   /* Animation Timing */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* Swiss Theme Variables */
+  --swiss-bg: #f5f2eb;
+  --swiss-text: #1a1a1a;
+  --swiss-grid: rgba(0, 0, 0, 0.03);
+  --swiss-card-bg: #ffffff;
+  --swiss-card-border: #1a1a1a;
+  --swiss-accent: #e63946;
+  --swiss-muted: #737373;
+  --swiss-number-color: rgba(0, 0, 0, 0.03);
+  --swiss-button-bg: #1a1a1a;
+  --swiss-button-text: #f5f2eb;
+  --swiss-input-bg: #f5f2eb;
+  --swiss-category-bg: #ffffff;
+}
+
+.dark {
+  --swiss-bg: #121212;
+  --swiss-text: #f5f2eb;
+  --swiss-grid: rgba(245, 242, 235, 0.05);
+  --swiss-card-bg: #1a1a1a;
+  --swiss-card-border: #262626;
+  --swiss-muted: #a3a3a3;
+  --swiss-number-color: rgba(245, 242, 235, 0.02);
+  --swiss-button-bg: #f5f2eb;
+  --swiss-button-text: #1a1a1a;
+  --swiss-input-bg: #1a1a1a;
+  --swiss-category-bg: #262626;
 }
 
 /* Base Styles */
@@ -388,20 +381,21 @@ body {
    ============================================ */
 
 .swiss-bg {
-  background: #f5f2eb;
+  background: var(--swiss-bg);
   min-height: 100vh;
   position: relative;
   overflow: hidden;
   font-family: 'Libre Franklin', sans-serif;
-  color: #1a1a1a;
+  color: var(--swiss-text);
+  transition: background-color 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo);
 }
 
 .swiss-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    linear-gradient(to right, var(--swiss-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--swiss-grid) 1px, transparent 1px);
   background-size: 60px 60px;
   pointer-events: none;
 }
@@ -430,7 +424,7 @@ body {
   font-family: 'Space Mono', monospace;
   font-size: 20rem;
   font-weight: 700;
-  color: rgba(0, 0, 0, 0.03);
+  color: var(--swiss-number-color);
   position: absolute;
   line-height: 1;
   pointer-events: none;
@@ -438,9 +432,10 @@ body {
 }
 
 .swiss-card {
-  background: #ffffff;
-  border: 2px solid #1a1a1a;
+  background: var(--swiss-card-bg);
+  border: 2px solid var(--swiss-card-border);
   position: relative;
+  transition: background-color 0.4s var(--ease-out-expo), border-color 0.4s var(--ease-out-expo);
 }
 
 .swiss-card::before {
@@ -448,10 +443,11 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: #1a1a1a;
+  background: var(--swiss-card-border);
   top: 6px;
   left: 6px;
   z-index: -1;
+  transition: background-color 0.4s var(--ease-out-expo);
 }
 
 .swiss-headline {
@@ -466,7 +462,7 @@ body {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #737373;
+  color: var(--swiss-muted);
 }
 
 .swiss-red {
@@ -474,19 +470,23 @@ body {
 }
 
 .swiss-button {
-  background: #1a1a1a;
-  color: #f5f2eb;
+  background: var(--swiss-button-bg);
+  color: var(--swiss-button-text);
   font-family: 'Space Mono', monospace;
   font-weight: 700;
   border: none;
   padding: 1rem 2rem;
   cursor: pointer;
+  display: inline-block;
   position: relative;
-  transition: transform 0.2s ease;
+  text-decoration: none;
+  transition: transform 0.2s var(--ease-out-back), background-color 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo);
 }
 
 .swiss-button:hover {
-  transform: translate(-3px, -3px);
+  transform: translate(-2px, -2px);
+  background: var(--swiss-accent);
+  color: white;
 }
 
 .swiss-button::before {
@@ -494,7 +494,7 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  background: #e63946;
+  background: var(--swiss-accent);
   top: 4px;
   left: 4px;
   z-index: -1;
@@ -502,7 +502,8 @@ body {
 
 .swiss-divider {
   height: 4px;
-  background: #1a1a1a;
+  background: var(--swiss-card-border);
+  transition: background-color 0.4s var(--ease-out-expo);
 }
 
 .ticker-tape {

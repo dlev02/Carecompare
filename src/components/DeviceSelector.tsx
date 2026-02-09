@@ -1,15 +1,39 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo } from 'react';
 import { DEVICE_CATALOG, CATEGORIES } from '../data/devices';
-import type { Device } from '../data/devices';
+import type { Device, IconName } from '../data/devices';
+import {
+    Smartphone,
+    Tablet,
+    Laptop,
+    Monitor,
+    Watch,
+    Headphones,
+    Speaker,
+    Tv,
+    Glasses,
+    Package
+} from 'lucide-react';
+
+const IconMap: Record<IconName, any> = {
+    Smartphone,
+    Tablet,
+    Laptop,
+    Monitor,
+    Watch,
+    Headphones,
+    Speaker,
+    Tv,
+    Glasses,
+    Package
+};
 
 interface DeviceSelectorProps {
     selectedDevices: Device[];
     onDevicesChange: (devices: Device[]) => void;
-    variant: 'glass' | 'minimal' | 'playful' | 'swiss' | 'liquid';
 }
 
-export function DeviceSelector({ selectedDevices, onDevicesChange, variant }: DeviceSelectorProps) {
+export function DeviceSelector({ selectedDevices, onDevicesChange }: DeviceSelectorProps) {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
@@ -42,86 +66,16 @@ export function DeviceSelector({ selectedDevices, onDevicesChange, variant }: De
     const isSelected = (deviceId: string) =>
         selectedDevices.some(d => d.id === deviceId);
 
-    // Variant-specific styles
-    const getContainerClass = () => {
-        switch (variant) {
-            case 'glass':
-                return 'glass-card p-6';
-            case 'minimal':
-                return 'minimal-surface p-6';
-            case 'playful':
-                return 'playful-card p-6';
-            case 'swiss':
-                return 'bg-white p-6 border-2 border-black relative after:absolute after:inset-0 after:bg-black after:translate-x-1 after:translate-y-1 after:-z-10';
-            case 'liquid':
-                return 'liquid-card p-6 liquid-glow';
-        }
-    };
+    const getContainerClass = () => 'bg-[var(--swiss-card-bg)] p-6 border-2 border-[var(--swiss-card-border)] relative transition-colors duration-400 after:absolute after:inset-0 after:bg-[var(--swiss-card-border)] after:translate-x-1 after:translate-y-1 after:-z-10';
 
-    const getInputClass = () => {
-        switch (variant) {
-            case 'glass':
-                return 'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white/30 transition-colors';
-            case 'minimal':
-                return 'w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-neutral-500 focus:outline-none focus:border-cyan-400 transition-colors';
-            case 'playful':
-                return 'w-full bg-white border-2 border-black/10 rounded-2xl px-4 py-3 text-black placeholder-black/40 focus:outline-none focus:border-orange-400 transition-colors';
-            case 'swiss':
-                return 'w-full bg-[#f5f2eb] border-2 border-black px-4 py-3 text-black placeholder-neutral-500 focus:outline-none focus:border-[#e63946] transition-colors font-mono';
-            case 'liquid':
-                return 'w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-cyan-400/50 transition-colors';
-        }
-    };
+    const getInputClass = () => 'w-full bg-[var(--swiss-input-bg)] border-2 border-[var(--swiss-card-border)] px-4 py-3 text-[var(--swiss-text)] placeholder-neutral-500 focus:outline-none focus:border-[var(--swiss-accent)] transition-colors font-mono';
 
-    const getCategoryClass = (isActive: boolean) => {
-        const base = 'px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer';
-        switch (variant) {
-            case 'glass':
-                return `${base} ${isActive
-                    ? 'bg-white/20 text-white'
-                    : 'bg-white/5 text-white/60 hover:bg-white/10'}`;
-            case 'minimal':
-                return `${base} ${isActive
-                    ? 'bg-cyan-400 text-black'
-                    : 'bg-white/5 text-white/60 hover:bg-white/10'}`;
-            case 'playful':
-                return `${base} ${isActive
-                    ? 'bg-gradient-to-r from-orange-400 to-pink-400 text-white'
-                    : 'bg-black/5 text-black/60 hover:bg-black/10'}`;
-            case 'swiss':
-                return `${isActive ? 'bg-[#e63946] text-white border-2 border-black' : 'bg-white text-black border-2 border-black hover:bg-[#f5f2eb]'} px-4 py-2 font-mono text-xs uppercase tracking-wider transition-all cursor-pointer`;
-            case 'liquid':
-                return `${base} ${isActive
-                    ? 'bg-white/20 text-white backdrop-blur-md'
-                    : 'bg-white/5 text-white/60 hover:bg-white/10'}`;
-        }
-    };
+    const getCategoryClass = (isActive: boolean) => `${isActive ? 'bg-[var(--swiss-accent)] text-white border-2 border-[var(--swiss-card-border)]' : 'bg-[var(--swiss-category-bg)] text-[var(--swiss-text)] border-2 border-[var(--swiss-card-border)] hover:bg-[var(--swiss-bg)]'} px-4 py-2 font-mono text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2`;
 
-    const getDeviceCardClass = (selected: boolean) => {
-        const base = 'p-4 cursor-pointer transition-all';
-        switch (variant) {
-            case 'glass':
-                return `${base} rounded-2xl ${selected
-                    ? 'bg-gradient-to-br from-cyan-500/30 to-purple-500/30 border border-white/30'
-                    : 'bg-white/5 border border-white/10 hover:bg-white/10'}`;
-            case 'minimal':
-                return `${base} rounded-2xl ${selected
-                    ? 'bg-cyan-400/20 border border-cyan-400'
-                    : 'bg-white/5 border border-white/10 hover:border-white/20'}`;
-            case 'playful':
-                return `${base} rounded-2xl ${selected
-                    ? 'bg-gradient-to-br from-orange-100 to-pink-100 border-2 border-orange-400'
-                    : 'bg-white border-2 border-black/5 hover:border-black/20'}`;
-            case 'swiss':
-                return `${base} ${selected
-                    ? 'bg-[#f5f2eb] border-2 border-[#e63946] ring-2 ring-black'
-                    : 'bg-white border-2 border-black hover:bg-[#f5f2eb]'}`;
-            case 'liquid':
-                return `${base} rounded-3xl ${selected
-                    ? 'bg-white/10 border border-cyan-400/50 backdrop-blur-md'
-                    : 'bg-white/5 border border-white/10 hover:bg-white/10'}`;
-        }
-    };
+    const getDeviceCardClass = (selected: boolean) => `flex items-center gap-3 p-4 border-2 transition-all ${selected
+        ? 'bg-[#e63946] border-black dark:border-[#f5f2eb]/20 translate-x-1 translate-y-1'
+        : 'bg-[var(--swiss-card-bg)] border-[var(--swiss-card-border)] hover:bg-[var(--swiss-bg)]'
+        } relative cursor-pointer`;
 
     return (
         <div className={getContainerClass()}>
@@ -146,43 +100,56 @@ export function DeviceSelector({ selectedDevices, onDevicesChange, variant }: De
                 >
                     All
                 </motion.button>
-                {CATEGORIES.map(cat => (
-                    <motion.button
-                        key={cat.id}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setActiveCategory(cat.id)}
-                        className={getCategoryClass(activeCategory === cat.id)}
-                    >
-                        {cat.icon} {cat.name}
-                    </motion.button>
-                ))}
+                {CATEGORIES.map(cat => {
+                    const CategoryIcon = IconMap[cat.icon as IconName];
+                    return (
+                        <motion.button
+                            key={cat.id}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setActiveCategory(cat.id)}
+                            className={getCategoryClass(activeCategory === cat.id)}
+                        >
+                            <CategoryIcon size={14} />
+                            {cat.name}
+                        </motion.button>
+                    );
+                })}
             </div>
 
             {/* Device Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 max-h-[400px] overflow-y-auto p-2">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 max-h-[500px] overflow-y-auto p-2">
                 <AnimatePresence mode="popLayout">
-                    {filteredDevices.map(device => (
-                        <motion.div
-                            key={device.id}
-                            layout
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => toggleDevice(device)}
-                            className={getDeviceCardClass(isSelected(device.id))}
-                        >
-                            <div className="text-2xl mb-2">{device.icon}</div>
-                            <div className={`text-sm font-medium ${variant === 'playful' || variant === 'swiss' ? 'text-black' : 'text-white'} ${variant === 'swiss' ? 'font-mono uppercase tracking-tighter' : ''}`}>
-                                {device.name}
-                            </div>
-                            <div className={`text-xs mt-1 ${variant === 'playful' || variant === 'swiss' ? 'text-black/50' : 'text-white/50'} ${variant === 'swiss' ? 'font-mono' : ''}`}>
-                                ${device.monthlyPrice.toFixed(2)}/mo
-                            </div>
-                        </motion.div>
-                    ))}
+                    {filteredDevices.map(device => {
+                        const DeviceIcon = IconMap[device.icon];
+                        return (
+                            <motion.div
+                                key={device.id}
+                                layout
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => toggleDevice(device)}
+                                className={getDeviceCardClass(isSelected(device.id))}
+                            >
+                                <div className={`${isSelected(device.id) ? 'text-white' : 'text-[var(--swiss-accent)]'}`}>
+                                    <DeviceIcon size={24} strokeWidth={2.5} />
+                                </div>
+                                <div className="flex-1">
+                                    <div
+                                        className={`font-mono uppercase text-[11px] font-bold leading-[1.2] ${isSelected(device.id) ? 'text-white' : 'text-[var(--swiss-text)]'}`}
+                                    >
+                                        {device.name}
+                                    </div>
+                                    <div className={`text-[10px] mt-1 font-mono leading-none ${isSelected(device.id) ? 'text-white/70' : 'text-[var(--swiss-text)] opacity-50'}`}>
+                                        ${device.monthlyPrice.toFixed(2)}/mo
+                                    </div>
+                                </div>
+                            </motion.div>
+                        );
+                    })}
                 </AnimatePresence>
             </div>
 
@@ -191,7 +158,7 @@ export function DeviceSelector({ selectedDevices, onDevicesChange, variant }: De
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`mt-4 text-center text-sm ${variant === 'playful' ? 'text-black/60' : 'text-white/60'}`}
+                    className="mt-4 text-center text-sm text-[var(--swiss-text)] opacity-60"
                 >
                     {selectedDevices.length} device{selectedDevices.length !== 1 ? 's' : ''} selected
                 </motion.div>

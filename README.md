@@ -1,73 +1,59 @@
-# React + TypeScript + Vite
+# AppleCare Calculator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Compare AppleCare+ individual plans vs. the AppleCare One bundle to find the best value for your Apple ecosystem.**
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The **AppleCare Calculator** helps you determine whether individual AppleCare+ monthly subscriptions or the unified **AppleCare One** bundle ($19.99/mo for up to 3 devices + $5.99 per additional device) provides optimal value for your devices.
 
-## React Compiler
+Updated with **2026 pricing data**. All calculations happen locally in your browser — no data is sent to any server.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Complete Device Catalog**: iPhone, iPad, Mac, Apple Watch, AirPods, Apple TV, HomePod, and Vision Pro
+- **Real-Time Comparison**: Instantly see monthly and annual costs side-by-side
+- **Smart Recommendations**: Clear indication of which option saves you money
+- **Dark/Light Mode**: Swiss-inspired minimalist design with theme toggle
+- **Responsive Design**: Works on desktop, tablet, and mobile
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Tech Stack
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **Framework**: React 19 + TypeScript
+- **Build Tool**: Vite 7
+- **Styling**: Tailwind CSS 4
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+
+---
+
+## Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/dlev02/carecompare.git
+cd carecompare
+
+# Install dependencies
+bun install  # or npm install
+
+# Start dev server
+bun run dev  # or npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Disclaimer
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+*Pricing based on current U.S. AppleCare+ rates as of 2026. Not affiliated with Apple Inc. Always verify final pricing on [Apple's official portal](https://www.apple.com/shop/product/applecare).*
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+**Built by [Drew Levinson](https://drewlevinson.me)**

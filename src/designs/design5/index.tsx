@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { DeviceSelector } from '../../components/DeviceSelector';
 import { ResultsDisplay } from '../../components/ResultsDisplay';
-import { DesignSwitcher } from '../../components/DesignSwitcher';
 import type { Device } from '../../data/devices';
 import { useCalculator } from '../../hooks/useCalculator';
 import { Footer } from '../../components/Footer';
+import { ThemeToggle } from '../../components/ThemeToggle';
 
 const SwissPrecision = () => {
     const [selectedDevices, setSelectedDevices] = useState<Device[]>([]);
@@ -23,6 +23,9 @@ const SwissPrecision = () => {
             {/* Large Background Numbers */}
             <div className="swiss-number" style={{ top: '5%', left: '-5%' }}>01</div>
             <div className="swiss-number" style={{ bottom: '10%', right: '-8%' }}>02</div>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Content */}
             <div className="relative z-10">
@@ -71,7 +74,7 @@ const SwissPrecision = () => {
                                     <span className="swiss-red text-3xl font-bold" style={{ fontFamily: "'Space Mono', monospace" }}>
                                         {selectedDevices.length}
                                     </span>
-                                    <span className="text-sm text-gray-500">devices selected</span>
+                                    <span className="text-sm text-[var(--swiss-text)] opacity-50">devices selected</span>
                                 </div>
                             </div>
                         </motion.div>
@@ -102,7 +105,6 @@ const SwissPrecision = () => {
                                 <DeviceSelector
                                     selectedDevices={selectedDevices}
                                     onDevicesChange={setSelectedDevices}
-                                    variant="swiss"
                                 />
                             </div>
                         </motion.div>
@@ -122,7 +124,6 @@ const SwissPrecision = () => {
                                 <ResultsDisplay
                                     result={result}
                                     selectedDevices={selectedDevices}
-                                    variant="swiss"
                                 />
                             </div>
                         </motion.div>
@@ -133,13 +134,13 @@ const SwissPrecision = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.2 }}
-                        className="mt-16 pt-8 border-t-2 border-black"
+                        className="mt-16 pt-8 border-t-2 border-[var(--swiss-card-border)] transition-colors duration-400"
                     >
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <div>
                                 <span className="swiss-label">Disclaimer</span>
-                                <p className="text-sm text-gray-600 mt-1" style={{ fontFamily: "'Libre Franklin', sans-serif" }}>
-                                    Pricing based on current AppleCare+ rates. Not affiliated with Apple Inc.
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 transition-colors duration-400" style={{ fontFamily: "'Libre Franklin', sans-serif" }}>
+                                    Pricing based on <a href="https://www.apple.com/applecare/?filter=watch" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#e63946] transition-colors">current AppleCare+ rates</a>. Not affiliated with Apple Inc.
                                 </p>
                             </div>
                             <a
@@ -155,9 +156,7 @@ const SwissPrecision = () => {
                 </div>
             </div>
 
-            {/* Design Switcher */}
-            <DesignSwitcher />
-            <Footer variant="swiss" />
+            <Footer />
         </div>
     );
 };
