@@ -39,7 +39,7 @@ function PriceCard({
     annual: number;
     isRecommended: boolean;
 }) {
-    const cardClass = `${isRecommended ? 'pt-12' : 'pt-8'} pb-6 px-6 ${isRecommended ? 'bg-[var(--swiss-bg)] border-2 border-[var(--swiss-accent)] shadow-[0_4px_0_0_var(--swiss-accent)]' : 'bg-[var(--swiss-card-bg)] border-2 border-[var(--swiss-card-border)] shadow-[4px_4px_0_0_var(--swiss-card-border)]'} relative transition-colors duration-400`;
+    const cardClass = `${isRecommended ? 'pt-12' : 'pt-8'} pb-6 px-4 sm:px-6 ${isRecommended ? 'bg-[var(--swiss-bg)] border-2 border-[var(--swiss-accent)] shadow-[0_4px_0_0_var(--swiss-accent)]' : 'bg-[var(--swiss-card-bg)] border-2 border-[var(--swiss-card-border)] shadow-[4px_4px_0_0_var(--swiss-card-border)]'} relative transition-colors duration-400 overflow-hidden`;
 
     return (
         <motion.div
@@ -62,7 +62,7 @@ function PriceCard({
             <div className="flex items-baseline gap-0 flex-col">
                 <motion.span
                     key={monthly}
-                    className="text-4xl font-bold text-[var(--swiss-text)] font-mono tracking-tighter text-3xl sm:text-4xl"
+                    className="font-bold text-[var(--swiss-text)] font-mono tracking-tighter text-2xl sm:text-3xl lg:text-4xl"
                 >
                     ${monthly.toFixed(2)}
                 </motion.span>
@@ -117,7 +117,7 @@ export function ResultsDisplay({ result, selectedDevices }: ResultsDisplayProps)
                 </div>
 
                 {/* Price Comparison */}
-                <div className="grid md:grid-cols-2 gap-4 mb-8">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-8">
                     <PriceCard
                         title="Individual AppleCare+"
                         monthly={result.individualMonthly}
