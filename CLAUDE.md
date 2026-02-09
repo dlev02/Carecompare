@@ -66,4 +66,4 @@ CNAME                   — Custom domain for Netlify
 
 ## UI/UX Changes
 
-When making any visual or design changes (layout, colors, typography, components, animations, responsive behavior), always use the `ui-ux-pro-max` skill first via the Skill tool. This ensures design decisions are informed by proper UI/UX methodology rather than ad-hoc guesses.
+When making any visual or design changes (layout, colors, typography, components, animations, responsive behavior), always use the `frontend-design` skill (by `claude-plugins-official`) first via the Skill tool. This ensures design decisions are informed by proper UI/UX methodology rather than ad-hoc guesses.
