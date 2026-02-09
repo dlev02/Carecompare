@@ -1,0 +1,554 @@
+@import "tailwindcss";
+
+/* ============================================
+   DESIGN SYSTEM - AppleCare Calculator
+   Three unique design variants
+   ============================================ */
+
+@theme {
+  /* Fonts */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Base Colors - Shared */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Design 1: Glass Aurora */
+  --color-aurora-purple: #a855f7;
+  --color-aurora-blue: #3b82f6;
+  --color-aurora-cyan: #06b6d4;
+  --color-aurora-pink: #ec4899;
+  --color-glass-bg: rgba(255, 255, 255, 0.08);
+  --color-glass-border: rgba(255, 255, 255, 0.15);
+  --color-glass-bg-light: rgba(0, 0, 0, 0.03);
+  --color-glass-border-light: rgba(0, 0, 0, 0.08);
+
+  /* Design 2: Minimal Black */
+  --color-minimal-bg: #0a0a0a;
+  --color-minimal-surface: #141414;
+  --color-minimal-text: #fafafa;
+  --color-minimal-muted: #737373;
+  --color-minimal-accent: #22d3ee;
+  --color-minimal-accent-glow: rgba(34, 211, 238, 0.4);
+
+  /* Design 3: Playful Gradient */
+  --color-playful-orange: #f97316;
+  --color-playful-pink: #ec4899;
+  --color-playful-violet: #8b5cf6;
+  --color-playful-yellow: #facc15;
+  --color-playful-green: #22c55e;
+
+  /* Semantic Colors */
+  --color-success: #22c55e;
+  --color-savings: #10b981;
+
+  /* Shadows */
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-elevated: 0 20px 60px rgba(0, 0, 0, 0.3);
+  --shadow-glow-cyan: 0 0 60px rgba(6, 182, 212, 0.3);
+  --shadow-glow-accent: 0 0 40px var(--color-minimal-accent-glow);
+
+  /* Animation Timing */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Base Styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   DESIGN 1: GLASS AURORA STYLES
+   ============================================ */
+
+.aurora-bg {
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.aurora-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.6;
+  animation: float 20s ease-in-out infinite;
+}
+
+.aurora-orb-1 {
+  width: 600px;
+  height: 600px;
+  background: linear-gradient(135deg, var(--color-aurora-purple), var(--color-aurora-blue));
+  top: -200px;
+  right: -100px;
+  animation-delay: 0s;
+}
+
+.aurora-orb-2 {
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, var(--color-aurora-cyan), var(--color-aurora-blue));
+  bottom: -150px;
+  left: -100px;
+  animation-delay: -7s;
+}
+
+.aurora-orb-3 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, var(--color-aurora-pink), var(--color-aurora-purple));
+  top: 40%;
+  left: 50%;
+  animation-delay: -14s;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(30px, -30px) scale(1.05);
+  }
+
+  50% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+
+  75% {
+    transform: translate(10px, 40px) scale(1.02);
+  }
+}
+
+.glass-card {
+  background: var(--color-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: 24px;
+  box-shadow: var(--shadow-glass);
+}
+
+/* ============================================
+   DESIGN 2: MINIMAL BLACK STYLES
+   ============================================ */
+
+.minimal-bg {
+  background: var(--color-minimal-bg);
+  min-height: 100vh;
+  color: var(--color-minimal-text);
+}
+
+.minimal-surface {
+  background: var(--color-minimal-surface);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+}
+
+.minimal-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  transition: all 0.2s var(--ease-out-expo);
+}
+
+.minimal-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-minimal-accent);
+  box-shadow: var(--shadow-glow-accent);
+}
+
+.minimal-chip.selected {
+  background: var(--color-minimal-accent);
+  color: var(--color-black);
+  border-color: var(--color-minimal-accent);
+}
+
+.glow-text {
+  text-shadow: 0 0 40px var(--color-minimal-accent-glow);
+}
+
+/* ============================================
+   DESIGN 3: PLAYFUL GRADIENT STYLES
+   ============================================ */
+
+.playful-bg {
+  background: linear-gradient(135deg, #fdf4ff 0%, #faf5ff 25%, #f0fdf4 50%, #fefce8 75%, #fff7ed 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+.gradient-mesh {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(249, 115, 22, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 30%, rgba(236, 72, 153, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 40% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 90%, rgba(34, 197, 94, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.playful-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(0, 0, 0, 0.05);
+  border-radius: 28px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s var(--ease-spring);
+}
+
+.playful-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.playful-btn {
+  background: linear-gradient(135deg, var(--color-playful-orange), var(--color-playful-pink));
+  color: white;
+  border: none;
+  border-radius: 16px;
+  padding: 1rem 2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-back);
+}
+
+.playful-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(249, 115, 22, 0.3);
+}
+
+/* ============================================
+   SHARED UTILITIES
+   ============================================ */
+
+.text-gradient-aurora {
+  background: linear-gradient(135deg, var(--color-aurora-cyan), var(--color-aurora-purple), var(--color-aurora-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-playful {
+  background: linear-gradient(135deg, var(--color-playful-orange), var(--color-playful-pink), var(--color-playful-violet));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
+   DESIGN 4: LIQUID CRYSTAL STYLES
+   Organic luxury with iridescent accents
+   ============================================ */
+
+.liquid-bg {
+  background: #0c1222;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.liquid-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.5;
+  mix-blend-mode: screen;
+}
+
+.liquid-blob-1 {
+  width: 700px;
+  height: 700px;
+  background: conic-gradient(from 180deg, #06b6d4, #8b5cf6, #ec4899, #06b6d4);
+  top: -300px;
+  right: -200px;
+  animation: morphBlob 25s ease-in-out infinite;
+}
+
+.liquid-blob-2 {
+  width: 500px;
+  height: 500px;
+  background: conic-gradient(from 90deg, #8b5cf6, #3b82f6, #06b6d4, #8b5cf6);
+  bottom: -200px;
+  left: -100px;
+  animation: morphBlob 20s ease-in-out infinite reverse;
+}
+
+.liquid-blob-3 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #ec4899 0%, #8b5cf6 50%, transparent 70%);
+  top: 50%;
+  left: 40%;
+  animation: morphBlob 30s ease-in-out infinite;
+  animation-delay: -10s;
+}
+
+@keyframes morphBlob {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+
+  25% {
+    transform: translate(50px, -50px) scale(1.1) rotate(90deg);
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+
+  50% {
+    transform: translate(-30px, 30px) scale(0.95) rotate(180deg);
+    border-radius: 50% 60% 30% 50% / 40% 50% 60% 50%;
+  }
+
+  75% {
+    transform: translate(20px, 60px) scale(1.05) rotate(270deg);
+    border-radius: 40% 30% 60% 50% / 60% 40% 50% 30%;
+  }
+}
+
+.liquid-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-radius: 32px;
+  border: 1px solid;
+  border-image: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3)) 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(139, 92, 246, 0.03), rgba(236, 72, 153, 0.05));
+  pointer-events: none;
+}
+
+.iridescent-border {
+  position: relative;
+  background: #0c1222;
+  border-radius: 24px;
+}
+
+.iridescent-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: conic-gradient(from 0deg, #06b6d4, #8b5cf6, #ec4899, #f97316, #06b6d4);
+  border-radius: 26px;
+  z-index: -1;
+  animation: rotateBorder 8s linear infinite;
+}
+
+@keyframes rotateBorder {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.text-gradient-iridescent {
+  background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.liquid-glow {
+  box-shadow:
+    0 0 60px rgba(139, 92, 246, 0.2),
+    0 0 120px rgba(6, 182, 212, 0.1);
+}
+
+/* ============================================
+   DESIGN 5: SWISS PRECISION STYLES
+   Editorial brutalist with grid-breaking typography
+   ============================================ */
+
+.swiss-bg {
+  background: #f5f2eb;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Libre Franklin', sans-serif;
+  color: #1a1a1a;
+}
+
+.swiss-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+.swiss-accent {
+  position: absolute;
+  background: #e63946;
+  z-index: 0;
+}
+
+.swiss-accent-1 {
+  width: 4px;
+  height: 200px;
+  top: 12%;
+  right: 5%;
+}
+
+.swiss-accent-2 {
+  width: 100px;
+  height: 4px;
+  bottom: 20%;
+  left: 5%;
+}
+
+.swiss-number {
+  font-family: 'Space Mono', monospace;
+  font-size: 20rem;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.03);
+  position: absolute;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.swiss-card {
+  background: #ffffff;
+  border: 2px solid #1a1a1a;
+  position: relative;
+}
+
+.swiss-card::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #1a1a1a;
+  top: 6px;
+  left: 6px;
+  z-index: -1;
+}
+
+.swiss-headline {
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+
+.swiss-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #737373;
+}
+
+.swiss-red {
+  color: #e63946;
+}
+
+.swiss-button {
+  background: #1a1a1a;
+  color: #f5f2eb;
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  border: none;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.swiss-button:hover {
+  transform: translate(-3px, -3px);
+}
+
+.swiss-button::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #e63946;
+  top: 4px;
+  left: 4px;
+  z-index: -1;
+}
+
+.swiss-divider {
+  height: 4px;
+  background: #1a1a1a;
+}
+
+.ticker-tape {
+  display: flex;
+  overflow: hidden;
+  white-space: nowrap;
+  background: #1a1a1a;
+  color: #f5f2eb;
+  font-family: 'Space Mono', monospace;
+  padding: 0.75rem 0;
+}
+
+.ticker-content {
+  display: flex;
+  animation: ticker 20s linear infinite;
+}
+
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ============================================
+   SHARED UTILITIES
+   ============================================ */
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+
+  .aurora-orb,
+  .liquid-blob {
+    animation: none;
+  }
+
+  .ticker-content {
+    animation: none;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
