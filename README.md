@@ -1,68 +1,59 @@
-#  AppleCare Calculator
+# AppleCare Calculator
 
-**Optimize your Apple ecosystem insurance costs with real-time bundle comparisons.**
+**Compare AppleCare+ individual plans vs. the AppleCare One bundle to find the best value for your Apple ecosystem.**
 
-![AppleCare Calculator Preview](https://raw.githubusercontent.com/dlev02/AppleCare_Calculator/main/assets/favicon.svg)
+## Overview
 
-## 📋 Overview
+The **AppleCare Calculator** helps you determine whether individual AppleCare+ monthly subscriptions or the unified **AppleCare One** bundle ($19.99/mo for up to 3 devices + $5.99 per additional device) provides optimal value for your devices.
 
-The **AppleCare Calculator** is a premium, web-based tool designed to help users navigate the value proposition of Apple's insurance offerings. It provides an instant comparison between individual AppleCare+ monthly subscriptions and the **AppleCare One** bundle, helping you determine the most cost-effective way to protect your devices.
-
-Updated with **2026 service data**, this tool is fast, private, and built with a focus on visual excellence.
+Updated with **2026 pricing data**. All calculations happen locally in your browser — no data is sent to any server.
 
 ---
 
-## ✨ Key Features
+## Features
 
-- **📱 Comprehensive Device Catalog**: Covering iPhone, Mac, iPad, Apple Watch, AirPods, and Vision Pro.
-- **⚖️ Dynamic Balance Scale**: A custom-animated visual explorer that tips in favor of the best value in real-time.
-- **🔍 Global Command Palette**: Instant search functionality accessible via `⌘K` for a desktop-class experience.
-- **🌓 Adaptive Theme**: Fully optimized for both Light and Dark modes, mirroring macOS and iOS aesthetics.
-- **⚡ PWA Ready**: Mobile-first design with manifest support, custom splash screens, and offline-ready foundations.
-- **🔒 Privacy First**: All calculations happen locally in your browser. No data is sent to a server.
-
----
-
-## 🛠️ Tech Stack
-
-- **Core**: Vanilla JavaScript (ES6+), HTML5, CSS3
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) (Modern layout & tokens)
-- **UI Architecture**: Glassmorphism, CSS Variables, and custom Bezier animations
-- **Utility**: `Intl.NumberFormat` for precise currency handling
+- **Complete Device Catalog**: iPhone, iPad, Mac, Apple Watch, AirPods, Apple TV, HomePod, and Vision Pro
+- **Real-Time Comparison**: Instantly see monthly and annual costs side-by-side
+- **Smart Recommendations**: Clear indication of which option saves you money
+- **Dark/Light Mode**: Swiss-inspired minimalist design with theme toggle
+- **Responsive Design**: Works on desktop, tablet, and mobile
 
 ---
 
-## 🚀 How It Works
+## Tech Stack
 
-1. **Search**: Find your devices using the global search or browse by category.
-2. **Add**: Add multiple devices to your "Device Inventory."
-3. **Compare**: The calculator automatically sums your individual costs and compares them against the AppleCare One bundle ($19.99 for 3 devices + specific add-on rates).
-4. **Analyze**: Watch the **Balance Scale** tilt and review your **Net Annual Savings** to make an informed decision.
-
----
-
-## 💻 Local Development
-
-Since this is a vanilla project, you can get it running in seconds:
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/dlev02/AppleCare_Calculator.git
-   ```
-2. **Open `index.html`**:
-   Simply open the `index.html` file in any modern web browser.
-   *Or use a local server for the best experience (e.g., Live Server in VS Code).*
+- **Framework**: React 19 + TypeScript
+- **Build Tool**: Vite 7
+- **Styling**: Tailwind CSS 4
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
 
 ---
 
-## ⚖️ Disclaimer
+## Local Development
 
-*Estimation only. Pricing reflects current U.S. AppleCare offerings as of early 2026. AppleCare and AppleCare+ are trademarks of Apple Inc. Always verify final pricing on Apple’s official portal.*
+```bash
+# Clone the repository
+git clone https://github.com/dlev02/carecompare.git
+cd carecompare
 
-## 📄 License
+# Install dependencies
+bun install  # or npm install
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+# Start dev server
+bun run dev  # or npm run dev
+```
 
 ---
 
-**Crafted with ❤️ by [dlev02](https://github.com/dlev02)**
+## Disclaimer
+
+*Pricing based on current U.S. AppleCare+ rates as of 2026. Not affiliated with Apple Inc. Always verify final pricing on [Apple's official portal](https://www.apple.com/shop/product/applecare).*
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+**Built by [Drew Levinson](https://drewlevinson.me)**
