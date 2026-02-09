@@ -104,12 +104,12 @@ const ICONS = {
 // Typewriter effect for search placeholder
 const TypewriterEffect = (() => {
   const PHRASES = [
-    'Search for iPhone 17 Pro...',
-    'Compare AppleCare+ plans...',
-    'Find your Mac...',
-    'How much is Apple Watch coverage?',
-    'Add your iPad Pro...',
-    'Calculate your bundle savings...',
+    'iPhone 17 Pro',
+    'MacBook Pro 14-inch',
+    'Apple Watch Series 11',
+    'iPad Pro 11-inch (M5)',
+    'AirPods Max',
+    'Apple Watch Ultra 3',
   ];
 
   const TYPE_SPEED = 60;
