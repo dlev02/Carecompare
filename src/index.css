@@ -477,16 +477,12 @@ body {
   border: none;
   padding: 1rem 2rem;
   cursor: pointer;
-  display: inline-block;
   position: relative;
-  text-decoration: none;
-  transition: transform 0.2s var(--ease-out-back), background-color 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo);
+  transition: transform 0.2s ease, background-color 0.4s var(--ease-out-expo), color 0.4s var(--ease-out-expo);
 }
 
 .swiss-button:hover {
-  transform: translate(-2px, -2px);
-  background: var(--swiss-accent);
-  color: white;
+  transform: translate(-3px, -3px);
 }
 
 .swiss-button::before {

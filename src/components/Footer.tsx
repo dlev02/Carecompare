@@ -10,15 +10,7 @@ export function Footer() {
                     transition={{ duration: 0.8 }}
                     className="text-[var(--swiss-text)] opacity-60 text-xs font-mono uppercase tracking-tighter font-bold transition-colors duration-400"
                 >
-                    Designed & Developed by{" "}
-                    <a
-                        href="https://drewlevinson.me"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[var(--swiss-text)] hover:text-[#e63946] transition-colors duration-200 border-b border-[var(--swiss-text)] hover:border-[#e63946]"
-                    >
-                        Drew Levinson
-                    </a>
+                    Designed & Developed by Drew Levinson
                 </motion.p>
             </div>
         </footer>
