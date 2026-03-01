@@ -140,7 +140,7 @@ const SwissPrecision = () => {
                             <div>
                                 <span className="swiss-label">Disclaimer</span>
                                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 transition-colors duration-400" style={{ fontFamily: "'Libre Franklin', sans-serif" }}>
-                                    Pricing based on <a href="https://www.apple.com/applecare/?filter=watch" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#e63946] transition-colors">current AppleCare+ rates</a>. Not affiliated with Apple Inc.
+                                    Pricing based on current AppleCare+ rates. Not affiliated with Apple Inc.
                                 </p>
                             </div>
                             <a
