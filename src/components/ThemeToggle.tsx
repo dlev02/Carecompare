@@ -26,14 +26,15 @@ export function ThemeToggle() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsDark(!isDark)}
-            className="fixed top-8 right-8 z-50 px-4 py-2 bg-black dark:bg-[#f5f2eb] text-[#f5f2eb] dark:text-black font-mono text-xs uppercase font-bold border-2 border-black tracking-widest transition-colors duration-300"
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="absolute top-14 right-4 md:right-6 z-50 px-4 py-2 bg-[var(--swiss-button-bg)] text-[var(--swiss-button-text)] font-mono text-xs uppercase font-bold border-2 border-[var(--swiss-card-border)] tracking-widest transition-colors duration-300 cursor-pointer"
         >
             <div className="flex items-center gap-3">
                 <span>{isDark ? 'LIGHT' : 'DARK'}</span>
-                <div className="w-3 h-3 bg-[#e63946]" />
+                <div className="w-3 h-3 bg-[var(--swiss-accent)]" />
             </div>
             {/* Minimalist offset shadow */}
-            <div className="absolute inset-0 bg-black dark:bg-[#f5f2eb] translate-x-1 translate-y-1 -z-10 opacity-20" />
+            <div className="absolute inset-0 bg-[var(--swiss-button-bg)] translate-x-1 translate-y-1 -z-10 opacity-20" />
         </motion.button>
     );
 }
