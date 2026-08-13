@@ -24,7 +24,7 @@ Package manager is bun (`bun.lock` is the committed lockfile); npm also works si
 - `src/components/DeviceSelector.tsx` — search box, category filter buttons, and the scrollable device grid
 - `src/components/ResultsDisplay.tsx` — price cards, cost bars, savings callout, and footnotes (break-even hint, annual-prepay hint, legacy-device hint)
 - `src/components/AnimatedPrice.tsx` — a `$X.XX` value that springs to a new number via `framer-motion`'s `useSpring`, instead of snapping
-- `src/components/ThemeToggle.tsx` — dark/light toggle
+- `src/components/ThemeToggle.tsx` — dark/light toggle. Follows `prefers-color-scheme` live (via a `matchMedia` change listener) until the visitor clicks it; only a click writes `theme` to `localStorage`, and from then on that stored choice wins. Nothing is written on first visit, so someone who never touches the toggle keeps tracking their system setting
 - `src/components/TickerTape.tsx` — the scrolling marquee of coverage facts under the header
 - `src/components/deviceIcons.ts` — maps each device's `IconName` string to a Lucide icon component
 - `src/index.css` — Tailwind entry point plus the `swiss-*` design tokens and utility classes (light/dark CSS variables, grid background, ticker animation, etc.)
