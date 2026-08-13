@@ -18,7 +18,7 @@ All calculations run in your browser. No data is sent to a server.
 - Cost bars comparing individual vs. bundle pricing on a shared scale
 - A break-even hint showing how much more coverage it would take for AppleCare One to win
 - A note on how much prepaying annually saves over monthly billing, for devices where Apple offers that option
-- Dark/light theme that follows your system setting by default; the toggle overrides it and remembers your choice
+- Dark/light theme that follows your system setting, including when you change it while the page is open; clicking the toggle pins your choice and remembers it
 - Responsive layout for desktop, tablet, and mobile
 
 ## Tech Stack
