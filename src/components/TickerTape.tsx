@@ -1,11 +1,10 @@
 const TICKER_ITEMS = [
-    'AppleCare One — $19.99/mo covers any 3 devices',
-    '+$5.99/mo per additional device',
-    'Theft & loss included on iPhone, iPad & Apple Watch',
-    '3 pooled theft & loss claims per year on One — vs 2 per device plan',
-    'Annual billing = 10× monthly — two months free',
-    'All math runs locally — nothing leaves your browser',
-    'Pricing verified July 2026',
+    'One Individual / 3 devices from $19.99 a month',
+    'One Family / $49.99 a month / available Sept 14',
+    'All eligible devices for up to 6 people',
+    'Family / 6 shared theft and loss claims per year',
+    'Unlimited accidental damage repairs / service fees apply',
+    'All calculations stay in your browser',
 ];
 
 /** Editorial marquee strip — pauses on hover */
@@ -13,7 +12,10 @@ export function TickerTape() {
     const run = TICKER_ITEMS.map((item, i) => (
         <span key={i} className="flex items-center">
             <span className="px-6">{item}</span>
-            <span className="inline-block w-2 h-2 bg-[var(--swiss-accent)]" aria-hidden="true" />
+            <span
+                className="inline-block w-2 h-2 bg-[var(--swiss-accent)]"
+                aria-hidden="true"
+            />
         </span>
     ));
 

@@ -1,169 +1,307 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { MotionConfig, motion } from 'framer-motion';
+import { ArrowUpRight, Users, UserRound } from 'lucide-react';
 import { DeviceSelector } from './components/DeviceSelector';
+import { HouseholdEditor } from './components/HouseholdEditor';
 import { ResultsDisplay } from './components/ResultsDisplay';
 import { TickerTape } from './components/TickerTape';
 import { ThemeToggle } from './components/ThemeToggle';
 import { Footer } from './components/Footer';
-import type { Device } from './data/devices';
 import { useCalculator } from './hooks/useCalculator';
+import type { Billing, Person } from './hooks/useCalculator';
 
+const makePerson = (name: string): Person => ({
+    id: crypto.randomUUID(),
+    name,
+    devices: [],
+    currentPlan: 'plus',
+    currentBill: '',
+});
 function App() {
-    const [selectedDevices, setSelectedDevices] = useState<Device[]>([]);
-    const result = useCalculator(selectedDevices);
-
-    const removeDevice = (device: Device) =>
-        setSelectedDevices(selectedDevices.filter(d => d.id !== device.id));
-
+    const [people, setPeople] = useState<Person[]>(() => [makePerson('You')]);
+    const [familyMode, setFamilyMode] = useState(false);
+    const [activeId, setActiveId] = useState('');
+    const [billing, setBilling] = useState<Billing>('monthly');
+    const visiblePeople = familyMode ? people : people.slice(0, 1);
+    const active =
+        visiblePeople.find((person) => person.id === activeId) ??
+        visiblePeople[0];
+    const result = useCalculator(visiblePeople, billing, familyMode);
+    const updatePerson = (person: Person) =>
+        setPeople((current) =>
+            current.map((item) => (item.id === person.id ? person : item))
+        );
+    const addPerson = () => {
+        if (people.length >= 6) return;
+        const person = makePerson(`Person ${people.length + 1}`);
+        setPeople((current) => [...current, person]);
+        setActiveId(person.id);
+    };
     return (
-        <div className="swiss-bg">
-            {/* Grid Background */}
-            <div className="swiss-grid" />
-
-            {/* Decorative Accents */}
-            <div className="swiss-accent swiss-accent-1" />
-            <div className="swiss-accent swiss-accent-2" />
-
-            {/* Large Background Numbers */}
-            <div className="swiss-number" style={{ top: '5%', left: '-5%' }}>01</div>
-            <div className="swiss-number" style={{ bottom: '10%', right: '-8%' }}>02</div>
-
-            {/* Ticker Header */}
-            <motion.div
-                initial={{ y: -48 }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            >
+        <MotionConfig reducedMotion="user">
+            <div className="swiss-bg">
+                <div className="swiss-grid" aria-hidden="true" />
                 <TickerTape />
-            </motion.div>
-
-            <ThemeToggle />
-
-            {/* Content */}
-            <div className="relative z-10">
-                <div className="px-4 md:px-8 lg:px-16 py-12 md:py-20">
-                    {/* Hero Section - Asymmetric Layout */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
-                        {/* Left Column - Large Title */}
-                        <motion.div
-                            initial={{ opacity: 0, x: -50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.8, delay: 0.2 }}
-                            className="lg:col-span-7"
-                        >
-                            <span className="swiss-label mb-4 block">AppleCare Calculator / 2026</span>
-                            <h1 className="swiss-headline text-5xl md:text-7xl lg:text-8xl mb-6">
-                                COMPARE<span className="swiss-red">.</span>
-                                <br />
-                                CALCULATE<span className="swiss-red">.</span>
-                                <br />
-                                <span className="swiss-red">SAVE.</span>
-                            </h1>
-                        </motion.div>
-
-                        {/* Right Column - Description */}
-                        <motion.div
-                            initial={{ opacity: 0, x: 50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.8, delay: 0.4 }}
-                            className="lg:col-span-5 flex flex-col justify-end"
-                        >
-                            <div className="lg:max-w-sm">
-                                <span className="swiss-label mb-4 block">About This Tool</span>
-                                <p className="text-lg leading-relaxed mb-6">
-                                    Determine whether individual AppleCare+ subscriptions or the unified
-                                    AppleCare One bundle provides optimal value for your device ecosystem.
-                                </p>
-                                <div className="flex items-center gap-4">
-                                    <span className="swiss-red text-3xl font-bold font-mono tabular-nums">
-                                        {selectedDevices.length}
-                                    </span>
-                                    <span className="text-sm text-[var(--swiss-text)] opacity-50">devices selected</span>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </div>
-
-                    {/* Divider */}
-                    <motion.div
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ duration: 1, delay: 0.6 }}
-                        className="swiss-divider mb-12 origin-left"
-                    />
-
-                    {/* Main Content Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                        {/* Device Selector */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 40 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.8 }}
-                            className="lg:col-span-7"
-                        >
-                            <div className="swiss-card p-6 md:p-8">
-                                <div className="flex items-baseline gap-4 mb-6">
-                                    <span className="swiss-red text-4xl font-bold font-mono">01</span>
-                                    <h2 className="swiss-headline text-2xl">SELECT DEVICES</h2>
-                                </div>
-                                <DeviceSelector
-                                    selectedDevices={selectedDevices}
-                                    onDevicesChange={setSelectedDevices}
-                                />
-                            </div>
-                        </motion.div>
-
-                        {/* Results Sidebar */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 40 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 1 }}
-                            className="lg:col-span-5 lg:sticky lg:top-8"
-                        >
-                            <div className="swiss-card p-6 md:p-8 border-none after:hidden">
-                                <div className="flex items-baseline gap-4 mb-6">
-                                    <span className="swiss-red text-4xl font-bold font-mono">02</span>
-                                    <h2 className="swiss-headline text-2xl">RESULTS</h2>
-                                </div>
-                                <ResultsDisplay
-                                    result={result}
-                                    selectedDevices={selectedDevices}
-                                    onRemoveDevice={removeDevice}
-                                />
-                            </div>
-                        </motion.div>
-                    </div>
-
-                    {/* Footer */}
-                    <motion.footer
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1.2 }}
-                        className="mt-16 pt-8 border-t-2 border-[var(--swiss-card-border)] transition-colors duration-400"
+                <ThemeToggle />
+                <main className="page-content">
+                    <motion.header
+                        className="hero"
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
                     >
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                            <div>
-                                <span className="swiss-label">Disclaimer</span>
-                                <p className="text-sm text-[var(--swiss-muted)] mt-1 transition-colors duration-400">
-                                    U.S. AppleCare+ pricing as of July 2026. Not affiliated with Apple Inc.
-                                </p>
-                            </div>
-                            <a
-                                href="https://github.com/dlev02/carecompare"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="swiss-button"
-                            >
-                                VIEW SOURCE →
+                        <div>
+                            <span className="swiss-label hero-kicker">
+                                CareCompare / AppleCare calculator
+                            </span>
+                            <h1 className="swiss-headline">
+                                COMPARE<span>.</span>
+                                <br />
+                                CALCULATE<span>.</span>
+                                <br />
+                                <em>SAVE.</em>
+                            </h1>
+                        </div>
+                        <div className="hero-copy">
+                            <span className="swiss-label">
+                                Your devices. Your people. Your call.
+                            </span>
+                            <p>
+                                Find the right AppleCare plan for you.
+                                <br />
+                                Or everyone you call family.
+                            </p>
+                            <p className="hero-description">
+                                Compare AppleCare+, One Individual, and the new
+                                One Family plan. Even if everyone pays a
+                                different way today.
+                            </p>
+                            <a href="#calculator">
+                                Let’s do the math <span>↘</span>
                             </a>
                         </div>
-                    </motion.footer>
-                </div>
+                    </motion.header>
+                    <a
+                        className="family-announcement"
+                        href="https://www.apple.com/applecare/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <span className="announcement-label">
+                            NEW / SEPT 14
+                        </span>
+                        <span>
+                            <strong>AppleCare One Family.</strong> All eligible
+                            devices. Up to six people.
+                        </span>
+                        <span className="announcement-price">
+                            $49.99<small>/mo</small> <ArrowUpRight size={19} />
+                        </span>
+                    </a>
+                    <section
+                        id="calculator"
+                        className="calculator"
+                        aria-label="AppleCare calculator"
+                    >
+                        <div className="calculator-toolbar">
+                            <div
+                                className="scope-toggle"
+                                aria-label="Who are you comparing for?"
+                            >
+                                <button
+                                    aria-pressed={!familyMode}
+                                    onClick={() => setFamilyMode(false)}
+                                >
+                                    <UserRound size={17} /> Just me
+                                </button>
+                                <button
+                                    aria-pressed={familyMode}
+                                    onClick={() => setFamilyMode(true)}
+                                >
+                                    <Users size={18} /> My family
+                                </button>
+                            </div>
+                            <div className="billing-control">
+                                <span className="swiss-label">
+                                    AppleCare+ billing
+                                </span>
+                                <div>
+                                    <button
+                                        aria-pressed={billing === 'monthly'}
+                                        onClick={() => setBilling('monthly')}
+                                    >
+                                        Monthly
+                                    </button>
+                                    <button
+                                        aria-pressed={billing === 'annual'}
+                                        onClick={() => setBilling('annual')}
+                                    >
+                                        Annual
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="calculator-columns">
+                            <section
+                                className="device-panel"
+                                aria-label="Build your device list"
+                            >
+                                <div className="section-heading">
+                                    <span>01</span>
+                                    <h2>
+                                        {familyMode
+                                            ? 'BUILD YOUR FAMILY'
+                                            : 'CHOOSE YOUR DEVICES'}
+                                    </h2>
+                                </div>
+                                <p className="panel-intro">
+                                    {familyMode
+                                        ? 'Add each person and their devices. We’ll compare the whole household.'
+                                        : 'Add the devices you want to cover. We’ll find the lowest-cost combination.'}
+                                </p>
+                                <HouseholdEditor
+                                billing={billing}
+                                    comparisonMonthly={result.best / 1200}
+                                    people={visiblePeople}
+                                    activeId={active.id}
+                                    familyMode={familyMode}
+                                    onActive={setActiveId}
+                                    onAddPerson={addPerson}
+                                    onUpdate={updatePerson}
+                                    onRemovePerson={(id) => {
+                                        setPeople((current) =>
+                                            current.filter(
+                                                (person) => person.id !== id
+                                            )
+                                        );
+                                        setActiveId(people[0].id);
+                                        requestAnimationFrame(() =>
+                                            document
+                                                .querySelector<HTMLButtonElement>(
+                                                    `[data-person-id="${people[0].id}"]`
+                                                )
+                                                ?.focus()
+                                        );
+                                    }}
+                                />
+                                <DeviceSelector
+                                    devices={active.devices}
+                                    personName={active.name}
+                                    onAdd={(device) =>
+                                        updatePerson({
+                                            ...active,
+                                            devices: [
+                                                ...active.devices,
+                                                {
+                                                    id: crypto.randomUUID(),
+                                                    device,
+                                                    eligible: true,
+                                                },
+                                            ],
+                                        })
+                                    }
+                                />
+                            </section>
+                            <ResultsDisplay
+                                result={result}
+                                familyMode={familyMode}
+                            />
+                        </div>
+                    </section>
+                    <section
+                        className="coverage-guide"
+                        aria-labelledby="coverage-heading"
+                    >
+                        <div>
+                            <span className="swiss-label">
+                                The details that matter
+                            </span>
+                            <h2 id="coverage-heading">
+                                Same family.
+                                <br />A few ground rules.
+                            </h2>
+                            <a
+                                href="https://www.apple.com/applecare/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Read Apple’s coverage details{' '}
+                                <ArrowUpRight size={15} />
+                            </a>
+                        </div>
+                        <div className="coverage-facts">
+                            <article>
+                                <span>01 / THE PEOPLE</span>
+                                <h3>Six people. One Family Sharing group.</h3>
+                                <p>
+                                    Family covers every eligible device across
+                                    the group for $49.99/month, with no
+                                    per-device add-on charge. U.S. availability
+                                    begins September 14, 2026.
+                                </p>
+                            </article>
+                            <article>
+                                <span>02 / THE COVERAGE</span>
+                                <h3>
+                                    Six theft and loss claims. Unlimited
+                                    accidents.
+                                </h3>
+                                <p>
+                                    The six claims are shared per year across
+                                    iPhone, iPad, and Apple Watch. One
+                                    Individual allows three; AppleCare+ with
+                                    Theft and Loss allows two per covered
+                                    device. Service fees and deductibles apply.
+                                </p>
+                            </article>
+                            <article>
+                                <span>03 / THE DEVICES</span>
+                                <h3>Older devices can qualify, too.</h3>
+                                <p>
+                                    Apple lists devices four years old or newer,
+                                    or headphones one year old or newer, in good
+                                    condition. Products already covered by
+                                    AppleCare+ can also qualify. Apple may
+                                    require a device check. Uncheck “Eligible
+                                    for One” to keep a device on its separate
+                                    plan in the math.
+                                </p>
+                            </article>
+                            <article>
+                                <span>04 / YOUR EXISTING PLANS</span>
+                                <h3>Compare your real bill.</h3>
+                                <p>
+                                    Use “Current spending” for each person to
+                                    enter older rates, prepaid coverage, or a
+                                    mix of plans. Historical plans may have
+                                    different benefits. This calculator compares
+                                    costs; it doesn’t verify coverage or
+                                    calculate refunds.
+                                </p>
+                            </article>
+                        </div>
+                    </section>
+                    <div className="source-note">
+                        <p>
+                            U.S. estimates · New plan and current prices checked
+                            September 9, 2026.
+                            <br />
+                            Legacy entries include older reference rates and
+                            verified Apple refurbished offers. Not affiliated
+                            with Apple.
+                        </p>
+                        <a
+                            href="https://github.com/dlev02/carecompare"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View source <ArrowUpRight size={15} />
+                        </a>
+                    </div>
+                </main>
+                <Footer />
             </div>
-
-            <Footer />
-        </div>
+        </MotionConfig>
     );
 }
-
 export default App;

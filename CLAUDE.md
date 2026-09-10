@@ -1,8 +1,16 @@
 # AppleCare Calculator
 
-A single-page React app that compares the cost of individual AppleCare+ plans against the AppleCare One bundle, so you can see which is cheaper for a given set of devices. Live at [carecompare.xyz](https://carecompare.xyz).
+A single-page React app that compares AppleCare+, AppleCare One Individual and AppleCare One Family for one person or up to six Family Sharing members. Live at [carecompare.xyz](https://carecompare.xyz).
 
 Everything runs client-side. There is no backend, no API, and no data collection — device prices are hardcoded in the app and all math happens in the browser.
+
+## Working scope and verification
+
+Complete requested changes and relevant verification while preserving unrelated working and staged edits. Use existing patterns for routine choices; ask only for material ambiguity or missing authorization. Questions and report-only audits remain read-only. Publishing requires release authorization, which carries forward once given.
+
+Use lint/build checks for relevant source changes and inspect affected UI when appearance or interaction changes. For pricing logic, check empty selections, the three-device boundary, additional slots, equal totals, and annual-price fallbacks. Documentation-only changes need content/link/diff checks. Run `bun test tests/calculator.test.ts` for the focused pricing regression tests; do not describe a build as a passing test suite. Repeat passing checks only for changed inputs or unresolved concerns.
+
+When changing prices or eligibility claims, verify Apple's current official terms for the intended market and record the source/date. The catalog and constants are implementation data, not proof of current policy. Keep the calculation client-side and preserve the no-data-collection design.
 
 ## Tech Stack
 
@@ -13,49 +21,46 @@ Everything runs client-side. There is no backend, no API, and no data collection
 - Lucide React for icons
 - ESLint 9 (flat config) with `typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`
 
-Package manager is bun (`bun.lock` is the committed lockfile); npm also works since there's no bun-specific tooling in the scripts.
+Use Bun and the committed `bun.lock`. Read `package.json` for current versions and commands; do not introduce another lockfile during routine work.
 
 ## File Structure
 
-- `src/main.tsx` — entry point, mounts `<App />` in `StrictMode`
-- `src/App.tsx` — page layout: hero, ticker header, theme toggle, device selector + results grid, footer
-- `src/data/devices.ts` — the device catalog (`DEVICE_CATALOG`) and category list (`CATEGORIES`); this is the source of truth for every device name, price, and tag
-- `src/hooks/useCalculator.ts` — the pricing math (see below); exports `useCalculator` and the `APPLECARE_ONE` constants
-- `src/components/DeviceSelector.tsx` — search box, category filter buttons, and the scrollable device grid
-- `src/components/ResultsDisplay.tsx` — price cards, cost bars, savings callout, and footnotes (break-even hint, annual-prepay hint, legacy-device hint)
-- `src/components/AnimatedPrice.tsx` — a `$X.XX` value that springs to a new number via `framer-motion`'s `useSpring`, instead of snapping
-- `src/components/ThemeToggle.tsx` — dark/light toggle. Follows `prefers-color-scheme` live (via a `matchMedia` change listener) until the visitor clicks it; only a click writes `theme` to `localStorage`, and from then on that stored choice wins. Nothing is written on first visit, so someone who never touches the toggle keeps tracking their system setting
-- `src/components/TickerTape.tsx` — the scrolling marquee of coverage facts under the header
-- `src/components/deviceIcons.ts` — maps each device's `IconName` string to a Lucide icon component
-- `src/index.css` — Tailwind entry point plus the `swiss-*` design tokens and utility classes (light/dark CSS variables, grid background, ticker animation, etc.)
-- `public/favicon.svg` — the only static asset
+- `src/App.tsx` — hero, individual/family mode, people state, billing selector and coverage guide.
+- `src/data/devices.ts` — catalog, model categories and pricing provenance flags.
+- `src/hooks/useCalculator.ts` — pure `calculate` function, memoized hook, types and plan constants.
+- `src/components/HouseholdEditor.tsx` — people, owned device instances, eligibility and current spending.
+- `src/components/DeviceSelector.tsx` — searchable catalog; each click adds an independent device instance.
+- `src/components/ResultsDisplay.tsx` — comparison rows, actual-spending savings and per-person allocation explanation.
+- `src/components/AnimatedPrice.tsx` — animated price display.
+- `src/components/ThemeToggle.tsx` — follows system theme until the visitor explicitly chooses a stored preference.
+- `src/components/TickerTape.tsx`, `Footer.tsx`, `deviceIcons.ts` — shared page elements.
+- `src/index.css` — Swiss editorial design tokens and responsive layouts.
+- `tests/calculator.test.ts` — focused pricing regression tests.
+- `docs/pricing-sources.md` — authoritative source links, verification date and unresolved historical-price limitations.
 
 ## How the Calculation Works
 
-All of this lives in `src/hooks/useCalculator.ts`.
+`calculate` compares integer annual cents; display divides by 100 for yearly totals or 1200 for monthly equivalents. Monthly mode uses monthly rates × 12. Annual mode uses published annual AppleCare+ rates with monthly × 12 fallback. One stays monthly in both modes.
 
-AppleCare One pricing:
-- `$19.99/mo` covers up to 3 devices (`APPLECARE_ONE.baseSlots`)
-- `+$5.99/mo` for each additional device beyond 3
+Each `Person` has independent `OwnedDevice` instances, a name, and current spending. Duplicate models are allowed. Switching to Just me retains other people in state but compares only the first person's list. Family mode allows at most six people.
 
-Given the selected devices:
-- **Individual monthly** = sum of each device's `monthlyPrice`
-- **Individual annual** = individual monthly × 12 (what you'd pay billed monthly for a year)
-- **Individual annual prepay** = sum of each device's `annualPrice` where set, falling back to `monthlyPrice × 12` for devices that don't have one. Only current-generation and recent devices have an `annualPrice` in the catalog (roughly, but not exactly, 10× the monthly price — Apple's real annual prices round to a `.99` ending rather than landing on a clean 10×). Devices marked `legacy` have no `annualPrice`, so prepaying them saves nothing over monthly billing.
-- **Bundle monthly** = `$19.99 + $5.99 × max(0, deviceCount − 3)`
-- **Bundle annual** = bundle monthly × 12
-- **Recommendation** is whichever of individual/bundle monthly total is lower (`equal` if they tie, which is also the default when nothing is selected)
-- **Savings percent** = the difference divided by the larger of the two monthly totals
+For each person, compare AppleCare+ for all devices with every possible One Individual bundle size. Sort eligible devices by their separate cost; the most expensive plans go into the bundle. Remaining and ineligible devices stay on AppleCare+. One costs $19.99 for up to three devices, then $5.99 per extra device. Individual slots cannot be shared between people.
 
-The UI in `ResultsDisplay.tsx` also derives a couple of extra hints from this result: how many bundle slots are still open before the bundle price changes, and whether prepaying annually would beat monthly billing.
+Family costs $49.99/month plus separate coverage for devices marked ineligible. Compare it with the sum of each person's cheapest separate setup. Equal totals are exact ties. Empty selections show no recommendation or payable Family cost.
+
+Current spending defaults to catalog monthly rates, can model one Individual plan per person, or accepts a custom monthly total for mixed/grandfathered/prepaid plans. Invalid custom amounts suppress current-spending savings without blocking plan comparisons. Device selection and eligibility do not certify actual coverage.
 
 ## Device Catalog
 
-`src/data/devices.ts` is a flat array of `Device` objects, each with an `id`, `name`, `category` (`iphone` | `ipad` | `mac` | `watch` | `airpods` | `other`), an icon name, a `monthlyPrice`, an optional `annualPrice`, and two optional boolean flags:
-- `isNew` — shows a "New" tag in the picker (current-generation hardware)
-- `legacy` — shows a "Legacy" tag (no longer sold new; last-published monthly price only, no annual option)
+`Device` has `id`, `name`, `category`, `icon`, `monthlyPrice`, optional `annualPrice`, `isNew`, `legacy`, and `pricingStatus`.
 
-To add or update a device, edit this file directly — there's no CMS or external data source. Prices were last checked against apple.com/applecare in July 2026.
+- `isNew`: current-generation tag; remove when superseded.
+- `legacy`: older hardware only. It does not establish billing availability or bundle eligibility.
+- `pricingStatus: 'refurbished'`: verified current Apple refurbished-product offer; an existing subscription may differ.
+- `pricingStatus: 'unrefreshed'`: inherited older rate not independently verified in this update. UI labels it Older rate.
+- Omitted pricingStatus: verified current official AppleCare model-table price.
+
+Source/date records belong in `docs/pricing-sources.md`. Never fabricate historical rates or infer a price from another product's name. No backend or CMS is involved.
 
 ## Conventions
 
@@ -68,10 +73,11 @@ To add or update a device, edit this file directly — there's no CMS or externa
 ## Development
 
 ```bash
-bun install      # or npm install
+bun install      # preserve bun.lock as the sole lockfile
 bun run dev      # starts Vite dev server on http://localhost:5173
 bun run build    # tsc -b && vite build
 bun run lint     # eslint .
+bun test tests/calculator.test.ts  # focused pricing tests
 bun run preview  # preview the production build
 ```
 
