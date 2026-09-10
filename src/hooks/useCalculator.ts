@@ -1,92 +1,151 @@
 import { useMemo } from 'react';
 import type { Device } from '../data/devices';
 
-// AppleCare One pricing
-const APPLECARE_ONE_BASE = 19.99; // Monthly for up to 3 devices
-const APPLECARE_ONE_ADDITIONAL = 5.99; // Per additional device beyond 3
-export const APPLECARE_ONE = {
-    base: APPLECARE_ONE_BASE,
-    additional: APPLECARE_ONE_ADDITIONAL,
-    baseSlots: 3,
+// U.S. terms checked September 9, 2026: https://www.apple.com/applecare/
+export const APPLECARE_ONE = { base: 19.99, additional: 5.99, baseSlots: 3 };
+export const APPLECARE_FAMILY = {
+    monthly: 49.99,
+    maxPeople: 6,
+    available: 'September 14, 2026',
 };
-
-export interface CalculationResult {
-    individualMonthly: number;
-    individualAnnual: number;
-    /** Total if each plan is prepaid yearly instead of billed monthly */
-    individualAnnualPrepay: number;
-    bundleMonthly: number;
-    bundleAnnual: number;
-    monthlySavings: number;
-    annualSavings: number;
-    recommendation: 'individual' | 'bundle' | 'equal';
-    savingsPercent: number;
-    /** Unused bundle slots before the +$5.99 surcharge kicks in */
-    openBundleSlots: number;
+export type Billing = 'monthly' | 'annual';
+export const validBill = (value: string) =>
+    /^\d+(\.\d{1,2})?$/.test(value) && Number(value) <= 100000;
+export interface OwnedDevice {
+    id: string;
+    device: Device;
+    eligible: boolean;
 }
+export interface Person {
+    id: string;
+    name: string;
+    devices: OwnedDevice[];
+    currentPlan: 'plus' | 'one' | 'custom';
+    currentBill: string;
+}
+export interface PersonComparison {
+    person: Person;
+    plus: number;
+    one: number | null;
+    best: number;
+    bundledIds: string[];
+    current: number | null;
+}
+export interface CalculationResult {
+    people: PersonComparison[];
+    count: number;
+    excluded: number;
+    plus: number;
+    separate: number;
+    one: number | null;
+    family: number;
+    current: number | null;
+    best: number;
+    billing: Billing;
+}
+const cents = (amount: number) => Math.round(amount * 100);
+// Compare integer annual cents so annual fallbacks and ties are exact.
+const plusCost = (device: Device, billing: Billing) =>
+    billing === 'annual' && device.annualPrice !== undefined
+        ? cents(device.annualPrice)
+        : cents(device.monthlyPrice) * 12;
+const bundleCost = (count: number) =>
+    count === 0 ? 0 : (1999 + 599 * Math.max(0, count - 3)) * 12;
 
-export function useCalculator(selectedDevices: Device[]): CalculationResult {
-    return useMemo(() => {
-        if (selectedDevices.length === 0) {
-            return {
-                individualMonthly: 0,
-                individualAnnual: 0,
-                individualAnnualPrepay: 0,
-                bundleMonthly: 0,
-                bundleAnnual: 0,
-                monthlySavings: 0,
-                annualSavings: 0,
-                recommendation: 'equal' as const,
-                savingsPercent: 0,
-                openBundleSlots: APPLECARE_ONE.baseSlots,
-            };
-        }
-
-        // Individual AppleCare+ costs
-        const individualMonthly = selectedDevices.reduce(
-            (sum, device) => sum + device.monthlyPrice,
+export function calculate(
+    people: Person[],
+    billing: Billing,
+    familyMode: boolean
+): CalculationResult {
+    const comparisons = people.map((person) => {
+        const plus = person.devices.reduce(
+            (sum, item) => sum + plusCost(item.device, billing),
             0
         );
-        const individualAnnual = individualMonthly * 12;
-        // Legacy devices have no published annual option — they stay on monthly billing
-        const individualAnnualPrepay = selectedDevices.reduce(
-            (sum, device) => sum + (device.annualPrice ?? device.monthlyPrice * 12),
-            0
-        );
-
-        // AppleCare One bundle cost
-        const deviceCount = selectedDevices.length;
-        const additionalDevices = Math.max(0, deviceCount - APPLECARE_ONE.baseSlots);
-        const bundleMonthly = APPLECARE_ONE_BASE + (additionalDevices * APPLECARE_ONE_ADDITIONAL);
-        const bundleAnnual = bundleMonthly * 12;
-
-        // Savings
-        const monthlySavings = Math.abs(individualMonthly - bundleMonthly);
-        const annualSavings = monthlySavings * 12;
-
-        let recommendation: 'individual' | 'bundle' | 'equal';
-        if (individualMonthly < bundleMonthly) {
-            recommendation = 'individual';
-        } else if (bundleMonthly < individualMonthly) {
-            recommendation = 'bundle';
-        } else {
-            recommendation = 'equal';
+        const eligible = person.devices
+            .filter((item) => item.eligible)
+            .sort(
+                (a, b) =>
+                    plusCost(b.device, billing) - plusCost(a.device, billing)
+            );
+        let one: number | null = null;
+        let bestIds: string[] = [];
+        let removedCost = 0;
+        // For each bundle size, covering the most expensive separate plans is optimal.
+        eligible.forEach((item, index) => {
+            removedCost += plusCost(item.device, billing);
+            const candidate = bundleCost(index + 1) + plus - removedCost;
+            if (one === null || candidate < one) {
+                one = candidate;
+                bestIds = eligible.slice(0, index + 1).map((entry) => entry.id);
+            }
+        });
+        const excluded = person.devices
+            .filter((item) => !item.eligible)
+            .reduce((sum, item) => sum + plusCost(item.device, 'monthly'), 0);
+        let current: number | null =
+            person.currentPlan === 'one'
+                ? bundleCost(eligible.length) + excluded
+                : person.devices.reduce(
+                      (sum, item) => sum + plusCost(item.device, 'monthly'),
+                      0
+                  );
+        if (person.currentPlan === 'custom') {
+            current = validBill(person.currentBill)
+                ? cents(Number(person.currentBill)) * 12
+                : null;
         }
-
-        const maxCost = Math.max(individualMonthly, bundleMonthly);
-        const savingsPercent = maxCost > 0 ? (monthlySavings / maxCost) * 100 : 0;
-
         return {
-            individualMonthly,
-            individualAnnual,
-            individualAnnualPrepay,
-            bundleMonthly,
-            bundleAnnual,
-            monthlySavings,
-            annualSavings,
-            recommendation,
-            savingsPercent,
-            openBundleSlots: Math.max(0, APPLECARE_ONE.baseSlots - deviceCount),
+            person,
+            plus,
+            one,
+            best: Math.min(plus, one ?? plus),
+            bundledIds: one !== null && one < plus ? bestIds : [],
+            current,
         };
-    }, [selectedDevices]);
+    });
+    const count = people.reduce(
+        (sum, person) => sum + person.devices.length,
+        0
+    );
+    const excludedDevices = people
+        .flatMap((person) => person.devices)
+        .filter((item) => !item.eligible);
+    const plus = comparisons.reduce((sum, person) => sum + person.plus, 0);
+    const separate = comparisons.reduce((sum, person) => sum + person.best, 0);
+    const family = count
+        ? cents(APPLECARE_FAMILY.monthly) * 12 +
+          excludedDevices.reduce(
+              (sum, item) => sum + plusCost(item.device, billing),
+              0
+          )
+        : 0;
+    const current = comparisons.some((person) => person.current === null)
+        ? null
+        : comparisons.reduce((sum, person) => sum + person.current!, 0);
+    return {
+        people: comparisons,
+        count,
+        excluded: excludedDevices.length,
+        plus,
+        separate,
+        one: comparisons[0]?.one ?? null,
+        family,
+        current,
+        best:
+            familyMode && people.length <= APPLECARE_FAMILY.maxPeople
+                ? Math.min(separate, family)
+                : separate,
+        billing,
+    };
+}
+export function useCalculator(
+    people: Person[],
+    billing: Billing,
+    familyMode: boolean
+) {
+    return useMemo(
+        () => calculate(people, billing, familyMode),
+        [people, billing, familyMode]
+    );
 }
