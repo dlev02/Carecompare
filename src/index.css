@@ -350,6 +350,8 @@ summary { cursor: pointer; font-size: 12px; padding: 12px 0; }
 .catalog-heading h3 span { font-weight: 400; color: var(--swiss-muted); }
 .catalog-heading > span { font-size: 9px; flex-shrink: 0; }
 .search-field { display: flex; align-items: center; gap: 10px; padding: 0 12px; border: 1px solid var(--swiss-card-border); background: var(--swiss-card-bg); }
+.search-field:focus-within { border-color: var(--swiss-accent); box-shadow: 0 0 0 1px var(--swiss-accent); }
+.search-field input:focus-visible { outline: none; }
 .search-field > svg { color: var(--swiss-muted); flex-shrink: 0; }
 .search-field input { width: 100%; min-width: 0; padding: 14px 0; font-size: 13px; background: transparent; }
 .search-field button { padding: 10px 0 10px 8px; }
