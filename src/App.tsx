@@ -63,9 +63,6 @@ function App() {
                             </h1>
                         </div>
                         <div className="hero-copy">
-                            <span className="swiss-label">
-                                Your devices. Your people. Your call.
-                            </span>
                             <p>
                                 Find the right AppleCare plan for you.
                                 <br />
@@ -73,73 +70,35 @@ function App() {
                             </p>
                             <p className="hero-description">
                                 Compare AppleCare+, One Individual, and the new
-                                One Family plan. Even if everyone pays a
-                                different way today.
+                                One Family plan. Up to six people for $49.99 a
+                                month, starting September 14.
                             </p>
                             <a href="#calculator">
                                 Let’s do the math <span>↘</span>
                             </a>
                         </div>
                     </motion.header>
-                    <a
-                        className="family-announcement"
-                        href="https://www.apple.com/applecare/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <span className="announcement-label">
-                            NEW / SEPT 14
-                        </span>
-                        <span>
-                            <strong>AppleCare One Family.</strong> All eligible
-                            devices. Up to six people.
-                        </span>
-                        <span className="announcement-price">
-                            $49.99<small>/mo</small> <ArrowUpRight size={19} />
-                        </span>
-                    </a>
                     <section
                         id="calculator"
                         className="calculator"
                         aria-label="AppleCare calculator"
                     >
-                        <div className="calculator-toolbar">
-                            <div
-                                className="scope-toggle"
-                                aria-label="Who are you comparing for?"
+                        <div
+                            className="scope-toggle"
+                            aria-label="Who are you comparing for?"
+                        >
+                            <button
+                                aria-pressed={!familyMode}
+                                onClick={() => setFamilyMode(false)}
                             >
-                                <button
-                                    aria-pressed={!familyMode}
-                                    onClick={() => setFamilyMode(false)}
-                                >
-                                    <UserRound size={17} /> Just me
-                                </button>
-                                <button
-                                    aria-pressed={familyMode}
-                                    onClick={() => setFamilyMode(true)}
-                                >
-                                    <Users size={18} /> My family
-                                </button>
-                            </div>
-                            <div className="billing-control">
-                                <span className="swiss-label">
-                                    AppleCare+ billing
-                                </span>
-                                <div>
-                                    <button
-                                        aria-pressed={billing === 'monthly'}
-                                        onClick={() => setBilling('monthly')}
-                                    >
-                                        Monthly
-                                    </button>
-                                    <button
-                                        aria-pressed={billing === 'annual'}
-                                        onClick={() => setBilling('annual')}
-                                    >
-                                        Annual
-                                    </button>
-                                </div>
-                            </div>
+                                <UserRound size={17} /> Just me
+                            </button>
+                            <button
+                                aria-pressed={familyMode}
+                                onClick={() => setFamilyMode(true)}
+                            >
+                                <Users size={18} /> My family
+                            </button>
                         </div>
                         <div className="calculator-columns">
                             <section
@@ -160,7 +119,7 @@ function App() {
                                         : 'Add the devices you want to cover. We’ll find the lowest-cost combination.'}
                                 </p>
                                 <HouseholdEditor
-                                billing={billing}
+                                    billing={billing}
                                     comparisonMonthly={result.best / 1200}
                                     people={visiblePeople}
                                     activeId={active.id}
@@ -185,6 +144,7 @@ function App() {
                                     }}
                                 />
                                 <DeviceSelector
+                                    key={active.id}
                                     devices={active.devices}
                                     personName={active.name}
                                     onAdd={(device) =>
@@ -205,6 +165,8 @@ function App() {
                             <ResultsDisplay
                                 result={result}
                                 familyMode={familyMode}
+                                billing={billing}
+                                onBilling={setBilling}
                             />
                         </div>
                     </section>

@@ -1,11 +1,18 @@
-import type { CalculationResult } from '../hooks/useCalculator';
+import type { Billing, CalculationResult } from '../hooks/useCalculator';
 import { AnimatedPrice } from './AnimatedPrice';
 interface Props {
     result: CalculationResult;
     familyMode: boolean;
+    billing: Billing;
+    onBilling: (billing: Billing) => void;
 }
 const monthly = (annualCents: number) => annualCents / 1200;
-export function ResultsDisplay({ result, familyMode }: Props) {
+export function ResultsDisplay({
+    result,
+    familyMode,
+    billing,
+    onBilling,
+}: Props) {
     const rows = [
         {
             id: 'plus',
@@ -75,9 +82,26 @@ export function ResultsDisplay({ result, familyMode }: Props) {
             className="results"
             aria-label="Cost comparison"
         >
-            <div className="section-heading">
+            <div className="section-heading results-heading">
                 <span>02</span>
                 <h2>SEE THE DIFFERENCE</h2>
+                <div className="billing-control">
+                    <span className="swiss-label">AppleCare+ billing</span>
+                    <div>
+                        <button
+                            aria-pressed={billing === 'monthly'}
+                            onClick={() => onBilling('monthly')}
+                        >
+                            Monthly
+                        </button>
+                        <button
+                            aria-pressed={billing === 'annual'}
+                            onClick={() => onBilling('annual')}
+                        >
+                            Annual
+                        </button>
+                    </div>
+                </div>
             </div>
             {!result.count ? (
                 <div className="results-empty">
@@ -215,16 +239,17 @@ export function ResultsDisplay({ result, familyMode }: Props) {
                             to compare with what you pay now.
                         </p>
                     )}
-                    {result.current !== null && (
-                        <p className="small-note">
-                            Current spending: $
-                            {monthly(result.current).toFixed(2)}/mo. Uses
-                            monthly catalog rates unless you enter a bill.
-                        </p>
-                    )}
                     <details className="math-details">
                         <summary>How we worked it out</summary>
                         <div>
+                            {result.current !== null && (
+                                <p>
+                                    Current spending: $
+                                    {monthly(result.current).toFixed(2)}/mo,
+                                    from monthly catalog rates unless you
+                                    entered a bill.
+                                </p>
+                            )}
                             {familyMode && (
                                 <h4 className="math-subheading">
                                     {familyWins
