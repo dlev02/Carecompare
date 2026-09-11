@@ -69,12 +69,12 @@ export function HouseholdEditor({
                             disabled={people.length >= 6}
                             onClick={onAddPerson}
                         >
-                            <Plus size={15} /> Add person
+                            <Plus size={15} />{' '}
+                            {people.length >= 6
+                                ? 'Six people max'
+                                : 'Add person'}
                         </button>
                     </div>
-                    <p className="small-note people-note">
-                        {people.length} of 6 people · One Family Sharing group
-                    </p>
                 </>
             )}
             <div className="person-heading">
@@ -113,15 +113,26 @@ export function HouseholdEditor({
                             <div className="owned-device" key={item.id}>
                                 <Icon size={19} aria-hidden="true" />
                                 <div className="owned-device-copy">
-                                    <strong>{item.device.name}</strong>
-                                    {item.device.pricingStatus && (
-                                        <small className="price-provenance">
-                                            {item.device.pricingStatus ===
-                                            'refurbished'
-                                                ? 'Apple refurbished offer; your bill may differ.'
-                                                : 'Older reference rate; price and coverage may differ.'}
-                                        </small>
-                                    )}
+                                    <strong>
+                                        {item.device.name}
+                                        {item.device.pricingStatus && (
+                                            <b
+                                                className="price-tag"
+                                                title={
+                                                    item.device
+                                                        .pricingStatus ===
+                                                    'refurbished'
+                                                        ? 'Apple refurbished offer; your bill may differ.'
+                                                        : 'Older reference rate; price and coverage may differ.'
+                                                }
+                                            >
+                                                {item.device.pricingStatus ===
+                                                'refurbished'
+                                                    ? 'Refurb offer'
+                                                    : 'Older rate'}
+                                            </b>
+                                        )}
+                                    </strong>
                                     <label>
                                         <input
                                             type="checkbox"

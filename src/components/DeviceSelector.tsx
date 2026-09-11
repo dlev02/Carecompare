@@ -24,7 +24,6 @@ export function DeviceSelector({ devices, personName, onAdd }: Props) {
                 <h3>
                     Add devices <span>for {personName || 'this person'}</span>
                 </h3>
-                <span className="swiss-label">{filtered.length} models</span>
             </div>
             <div className="search-field">
                 <Search size={18} aria-hidden="true" />
@@ -84,7 +83,7 @@ export function DeviceSelector({ devices, personName, onAdd }: Props) {
                                     ${device.monthlyPrice.toFixed(2)}/mo
                                     {device.isNew && <b>New</b>}
                                     {device.pricingStatus && (
-                                        <b className="legacy-tag">
+                                        <b className="price-tag">
                                             {device.pricingStatus ===
                                             'unrefreshed'
                                                 ? 'Older rate'
@@ -105,10 +104,6 @@ export function DeviceSelector({ devices, personName, onAdd }: Props) {
                     </p>
                 )}
             </div>
-            <p className="small-note">
-                Tap a model to add it. Add it again for another of the same
-                device. Prices are U.S. estimates; legacy coverage can differ.
-            </p>
         </div>
     );
 }
