@@ -144,6 +144,7 @@ function App() {
                                     }}
                                 />
                                 <DeviceSelector
+                                    key={active.id}
                                     devices={active.devices}
                                     personName={active.name}
                                     onAdd={(device) =>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Search, Plus, X } from 'lucide-react';
 import { DEVICE_CATALOG, CATEGORIES } from '../data/devices';
 import type { Device } from '../data/devices';
@@ -13,6 +13,27 @@ interface Props {
 export function DeviceSelector({ devices, personName, onAdd }: Props) {
     const [query, setQuery] = useState('');
     const [category, setCategory] = useState<string | null>(null);
+    // null = automatic: open until this person has a device, then rest closed.
+    const [expanded, setExpanded] = useState<boolean | null>(null);
+    const searchRef = useRef<HTMLInputElement>(null);
+    const open = expanded ?? devices.length === 0;
+    useEffect(() => {
+        if (expanded) searchRef.current?.focus();
+    }, [expanded]);
+    const name = personName || 'this person';
+    if (!open) {
+        return (
+            <div className="catalog">
+                <button
+                    className="catalog-toggle"
+                    onClick={() => setExpanded(true)}
+                >
+                    <Plus size={18} aria-hidden="true" />
+                    Add another device <span>for {name}</span>
+                </button>
+            </div>
+        );
+    }
     const filtered = DEVICE_CATALOG.filter(
         (device) =>
             (!category || device.category === category) &&
@@ -22,12 +43,21 @@ export function DeviceSelector({ devices, personName, onAdd }: Props) {
         <div className="catalog">
             <div className="catalog-heading">
                 <h3>
-                    Add devices <span>for {personName || 'this person'}</span>
+                    Add devices <span>for {name}</span>
                 </h3>
+                {devices.length > 0 && (
+                    <button
+                        className="text-button"
+                        onClick={() => setExpanded(false)}
+                    >
+                        <X size={14} /> Done
+                    </button>
+                )}
             </div>
             <div className="search-field">
                 <Search size={18} aria-hidden="true" />
                 <input
+                    ref={searchRef}
                     aria-label="Search devices"
                     placeholder="Find your iPhone, Mac, Watch…"
                     value={query}
@@ -69,7 +99,10 @@ export function DeviceSelector({ devices, personName, onAdd }: Props) {
                         <button
                             key={device.id}
                             className="catalog-device"
-                            onClick={() => onAdd(device)}
+                            onClick={() => {
+                                onAdd(device);
+                                if (expanded === null) setExpanded(true);
+                            }}
                             aria-label={`Add ${device.name}`}
                         >
                             <Icon
