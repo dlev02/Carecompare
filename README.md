@@ -4,7 +4,7 @@ Compare AppleCare+, AppleCare One Individual, and AppleCare One Family for your 
 
 Choose **Just me** or **My family**, add devices for each person, and see the cost of separate coverage, an optimized mix of personal bundles, and Family. Each person can use different plans today. Enter their actual monthly bill under **Current spending** to compare real spending with the alternatives.
 
-All calculations run in your browser. No account, backend, or device data collection.
+All calculations run in your browser. No account, backend, or device data collection. Plan rules, eligibility notes and how the math works live on the [FAQ page](https://carecompare.xyz/faq); the story behind it is on the [About page](https://carecompare.xyz/about).
 
 ## Features
 

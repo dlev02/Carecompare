@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { SiteLink } from './SiteLink';
+import { SiteNav } from './SiteNav';
 import { APPLECARE_ONE, APPLECARE_FAMILY } from '../hooks/useCalculator';
 
 interface Entry {
@@ -224,16 +224,7 @@ const NUMBERED = GROUPS.map((group, groupIndex) => ({
 export function FaqPage() {
     return (
         <main className="page-content faq-page">
-            <nav className="site-nav" aria-label="Site">
-                <SiteLink href="/" className="site-brand">
-                    CareCompare
-                </SiteLink>
-                <ul>
-                    <li>
-                        <SiteLink href="/#calculator">Back to the calculator</SiteLink>
-                    </li>
-                </ul>
-            </nav>
+            <SiteNav current="faq" />
             <header className="page-hero">
                 <h1>
                     Questions,

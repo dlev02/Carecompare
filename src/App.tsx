@@ -8,7 +8,9 @@ import { TickerTape } from './components/TickerTape';
 import { ThemeToggle } from './components/ThemeToggle';
 import { Footer } from './components/Footer';
 import { FaqPage } from './components/FaqPage';
+import { AboutPage } from './components/AboutPage';
 import { SiteLink } from './components/SiteLink';
+import { SiteNav } from './components/SiteNav';
 import { useCalculator } from './hooks/useCalculator';
 import { useRoute } from './hooks/useRoute';
 import type { Billing, Person } from './hooks/useCalculator';
@@ -29,6 +31,10 @@ function App() {
     const route = useRoute();
     useEffect(() => {
         document.title = TITLES[route];
+        // A page opened at /faq#math renders after the browser's own hash
+        // jump has already fired, so land on the anchor once it exists.
+        const id = window.location.hash.slice(1);
+        if (id) document.getElementById(id)?.scrollIntoView();
     }, [route]);
     return (
         <MotionConfig reducedMotion="user">
@@ -36,7 +42,13 @@ function App() {
                 <div className="swiss-grid" aria-hidden="true" />
                 <TickerTape />
                 <ThemeToggle />
-                {route === 'faq' ? <FaqPage /> : <Calculator />}
+                {route === 'faq' ? (
+                    <FaqPage />
+                ) : route === 'about' ? (
+                    <AboutPage />
+                ) : (
+                    <Calculator />
+                )}
                 <Footer />
             </div>
         </MotionConfig>
@@ -64,16 +76,7 @@ function Calculator() {
     };
     return (
         <main className="page-content">
-            <nav className="site-nav" aria-label="Site">
-                <SiteLink href="/" className="site-brand">
-                    CareCompare
-                </SiteLink>
-                <ul>
-                    <li>
-                        <SiteLink href="/faq">FAQ</SiteLink>
-                    </li>
-                </ul>
-            </nav>
+            <SiteNav current="home" />
             <motion.header
                 className="hero"
                 initial={{ opacity: 0, y: 12 }}
@@ -201,19 +204,6 @@ function Calculator() {
                     Read the FAQ <ArrowUpRight size={15} />
                 </SiteLink>
             </aside>
-            <div className="page-foot">
-                <p>
-                    U.S. estimates · Prices checked September 9, 2026 · Not
-                    affiliated with Apple.
-                </p>
-                <a
-                    href="https://github.com/dlev02/carecompare"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    View source <ArrowUpRight size={15} />
-                </a>
-            </div>
         </main>
     );
 }
