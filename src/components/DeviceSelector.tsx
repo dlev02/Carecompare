@@ -8,9 +8,15 @@ import { DeviceIconMap } from './deviceIcons';
 interface Props {
     devices: OwnedDevice[];
     personName: string;
+    familyMode: boolean;
     onAdd: (device: Device) => void;
 }
-export function DeviceSelector({ devices, personName, onAdd }: Props) {
+export function DeviceSelector({
+    devices,
+    personName,
+    familyMode,
+    onAdd,
+}: Props) {
     const [query, setQuery] = useState('');
     const [category, setCategory] = useState<string | null>(null);
     // null = automatic: open until this person has a device, then rest closed.
@@ -29,7 +35,8 @@ export function DeviceSelector({ devices, personName, onAdd }: Props) {
                     onClick={() => setExpanded(true)}
                 >
                     <Plus size={18} aria-hidden="true" />
-                    Add another device <span>for {name}</span>
+                    Add another device{' '}
+                    {familyMode && <span>for {name}</span>}
                 </button>
             </div>
         );
@@ -39,21 +46,28 @@ export function DeviceSelector({ devices, personName, onAdd }: Props) {
             (!category || device.category === category) &&
             device.name.toLowerCase().includes(query.trim().toLowerCase())
     );
+    // The section heading already says “choose your devices” for a first,
+    // solo device; the catalog only needs its own heading once there is
+    // something to close it against or a person to name.
+    const showHeading = devices.length > 0 || familyMode;
     return (
-        <div className="catalog">
-            <div className="catalog-heading">
-                <h3>
-                    Add devices <span>for {name}</span>
-                </h3>
-                {devices.length > 0 && (
-                    <button
-                        className="text-button"
-                        onClick={() => setExpanded(false)}
-                    >
-                        <X size={14} /> Done
-                    </button>
-                )}
-            </div>
+        <div className={`catalog ${showHeading ? '' : 'catalog-lead'}`}>
+            {showHeading && (
+                <div className="catalog-heading">
+                    <h3>
+                        {devices.length ? 'Add more' : 'Add devices'}
+                        {familyMode && <span> for {name}</span>}
+                    </h3>
+                    {devices.length > 0 && (
+                        <button
+                            className="text-button"
+                            onClick={() => setExpanded(false)}
+                        >
+                            <X size={14} /> Done
+                        </button>
+                    )}
+                </div>
+            )}
             <div className="search-field">
                 <Search size={18} aria-hidden="true" />
                 <input
