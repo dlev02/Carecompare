@@ -25,7 +25,10 @@ Use Bun and the committed `bun.lock`. Read `package.json` for current versions a
 
 ## File Structure
 
-- `src/App.tsx` — hero, individual/family mode, people state, billing selector and coverage guide.
+- `src/App.tsx` — route shell (calculator at `/`, FAQ at `/faq`, About at `/about`), hero, individual/family mode, people state and billing selector.
+- `src/components/FaqPage.tsx` — plan rules, eligibility, math and provenance answers; the calculator page links here instead of repeating them.
+- `src/components/AboutPage.tsx` — why the site exists, what it does and doesn't do, and who made it.
+- `src/hooks/useRoute.ts`, `src/components/SiteLink.tsx`, `src/components/SiteNav.tsx` — history-based router, the in-app link, and the shared page nav. `public/_redirects` sends every path to the SPA on Netlify.
 - `src/data/devices.ts` — catalog, model categories and pricing provenance flags.
 - `src/hooks/useCalculator.ts` — pure `calculate` function, memoized hook, types and plan constants.
 - `src/components/HouseholdEditor.tsx` — people, owned device instances, eligibility and current spending.
@@ -68,7 +71,7 @@ Source/date records belong in `docs/pricing-sources.md`. Never fabricate histori
 - Hooks live in `src/hooks/`, camelCase with a `use` prefix
 - Styling is Tailwind utility classes plus a handful of custom CSS variables/classes prefixed `swiss-` in `src/index.css` — these drive the light/dark theme colors and the poster-style layout (hard borders, offset drop shadows, monospace labels)
 - Money values are formatted inline with `.toFixed(2)`, not through a shared formatter — there's no `formatCurrency()` helper in this codebase
-- No routing — it's a single page
+- Routing is a `pathname` switch in `useRoute` (no router library); internal links go through `SiteLink`
 
 ## Development
 

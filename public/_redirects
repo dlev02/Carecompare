@@ -1,0 +1,2 @@
+# Client-side routes (the FAQ lives at /faq) resolve to the single-page app.
+/*    /index.html   200

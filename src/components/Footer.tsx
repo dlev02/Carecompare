@@ -1,25 +1,51 @@
-import { motion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
+import { SiteLink } from './SiteLink';
 
 export function Footer() {
     return (
-        <footer className="py-12 px-6 border-t-2 border-[var(--swiss-card-border)] bg-[var(--swiss-bg)] transition-colors duration-400">
-            <div className="max-w-7xl mx-auto flex flex-col items-center justify-center space-y-2">
-                <motion.p
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="text-[var(--swiss-text)] opacity-60 text-xs font-mono uppercase tracking-tighter font-bold transition-colors duration-400"
-                >
-                    Designed &amp; developed by{' '}
-                    <a
-                        href="https://drewlevinson.me"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline underline-offset-4 hover:text-[var(--swiss-accent)]"
-                    >
-                        Drew Levinson ↗
-                    </a>
-                </motion.p>
+        <footer className="site-footer">
+            <div className="site-footer-inner">
+                <div className="site-footer-row">
+                    <SiteLink href="/" className="site-brand">
+                        CareCompare
+                    </SiteLink>
+                    <ul className="site-footer-links">
+                        <li>
+                            <SiteLink href="/#calculator">Calculator</SiteLink>
+                        </li>
+                        <li>
+                            <SiteLink href="/faq">FAQ</SiteLink>
+                        </li>
+                        <li>
+                            <SiteLink href="/about">About</SiteLink>
+                        </li>
+                        <li>
+                            <a
+                                href="https://github.com/dlev02/carecompare"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Source <ArrowUpRight size={12} />
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div className="site-footer-row site-footer-meta">
+                    <p>
+                        U.S. estimates. Prices checked September 9, 2026. Not
+                        affiliated with Apple.
+                    </p>
+                    <p>
+                        Designed and developed by{' '}
+                        <a
+                            href="https://drewlevinson.me"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Drew Levinson
+                        </a>
+                    </p>
+                </div>
             </div>
         </footer>
     );

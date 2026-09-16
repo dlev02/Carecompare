@@ -1,5 +1,6 @@
 import type { Billing, CalculationResult } from '../hooks/useCalculator';
 import { AnimatedPrice } from './AnimatedPrice';
+import { SiteLink } from './SiteLink';
 interface Props {
     result: CalculationResult;
     familyMode: boolean;
@@ -105,19 +106,14 @@ export function ResultsDisplay({
             </div>
             {!result.count ? (
                 <div className="results-empty">
-                    <span className="swiss-label">
-                        Your comparison starts here
-                    </span>
                     <h3>
                         A little math.
                         <br />A clearer choice.
                     </h3>
                     <p>
-                        Add your devices to compare{' '}
                         {familyMode
-                            ? 'separate plans with Family'
-                            : 'AppleCare+ with One Individual'}
-                        . We’ll work out which combination costs less.
+                            ? 'Add each person’s devices and we’ll compare separate plans with Family.'
+                            : 'Add your devices and we’ll compare AppleCare+ with One Individual.'}
                     </p>
                     <div className="empty-plan-preview">
                         <span>
@@ -144,7 +140,8 @@ export function ResultsDisplay({
                         aria-atomic="true"
                     >
                         <span className="swiss-label">
-                            {result.count} devices ·{' '}
+                            {result.count}{' '}
+                            {result.count === 1 ? 'device' : 'devices'} ·{' '}
                             {familyMode
                                 ? `${result.people.length} people`
                                 : '1 person'}
@@ -176,11 +173,6 @@ export function ResultsDisplay({
                                 </div>
                                 <p>
                                     {row.subtitle}
-                                    {row.id === 'family' && (
-                                        <span className="launch-label">
-                                            Available September 14
-                                        </span>
-                                    )}
                                 </p>
                                 {row.cost === null ? (
                                     <span className="small-note">
@@ -300,35 +292,18 @@ export function ResultsDisplay({
                                     </div>
                                 ))}
                             <p>
-                                Each person’s Individual bundle starts at $19.99
-                                for up to three eligible devices, then $5.99
-                                each. We compare every bundle size and leave
-                                lower-cost devices on AppleCare+ when it saves
-                                money.
-                            </p>
-                            {familyMode && (
-                                <p>
-                                    Family is $49.99/month total. Devices you
-                                    mark ineligible keep separate AppleCare+
-                                    costs in every comparison.
-                                </p>
-                            )}
-                            <p>
                                 {result.billing === 'annual'
-                                    ? 'Annual AppleCare+ prices are used when published; otherwise monthly rates × 12. Monthly equivalents spread the yearly cost over 12 months. One plans remain monthly.'
-                                    : 'All options use monthly billing. Try annual billing to compare AppleCare+ prepayment rates.'}{' '}
-                                Taxes, service fees and cancellation refunds are
-                                excluded.
+                                    ? 'Annual AppleCare+ prices where published, otherwise monthly × 12; One plans stay monthly.'
+                                    : 'Monthly rates × 12 for every plan.'}{' '}
+                                Taxes, service fees and refunds are excluded.{' '}
+                                <SiteLink href="/faq#math">
+                                    How the math works
+                                </SiteLink>
                             </p>
                         </div>
                     </details>
                 </>
             )}
-            <p className="results-caveat">
-                Cost comparison assumes the selected devices qualify. Older plan
-                prices and benefits can differ; confirm eligibility and final
-                pricing with Apple.
-            </p>
         </section>
     );
 }
