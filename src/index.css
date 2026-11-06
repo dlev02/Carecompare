@@ -27,6 +27,8 @@
   --swiss-number-color: rgba(0, 0, 0, 0.03);
   --swiss-button-bg: #1a1a1a;
   --swiss-button-text: #f5f2eb;
+  --swiss-result-bg: #1a1a1a;
+  --swiss-result-text: #f5f2eb;
   --swiss-input-bg: #f5f2eb;
   --swiss-category-bg: #ffffff;
   --swiss-ticker-bg: #1a1a1a;
@@ -44,6 +46,8 @@
   --swiss-number-color: rgba(245, 242, 235, 0.02);
   --swiss-button-bg: #f5f2eb;
   --swiss-button-text: #1a1a1a;
+  --swiss-result-bg: #262626;
+  --swiss-result-text: #f5f2eb;
   --swiss-input-bg: #121212;
   --swiss-category-bg: #262626;
   --swiss-ticker-bg: #f5f2eb;
@@ -396,10 +400,10 @@ summary { cursor: pointer; font-size: 12px; padding: 12px 0; }
 .comparison-rows { border: 1px solid var(--swiss-card-border); }
 .comparison-row { padding: 18px 20px; background: var(--swiss-card-bg); }
 .comparison-row + .comparison-row { border-top: 1px solid var(--swiss-card-border); }
-.comparison-row.is-best { background: var(--swiss-button-bg); color: var(--swiss-button-text); }
+.comparison-row.is-best { background: var(--swiss-result-bg); color: var(--swiss-result-text); box-shadow: inset 3px 0 var(--swiss-accent); }
 .comparison-row-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
 .comparison-row h4 { font-weight: 600; font-size: 13px; }
-.value-label { color: var(--swiss-button-text); border: 1px solid currentColor; padding: 3px 6px; font: 10px var(--font-mono); text-transform: uppercase; white-space: nowrap; }
+.value-label { color: inherit; border: 1px solid currentColor; padding: 3px 6px; font: 10px var(--font-mono); text-transform: uppercase; white-space: nowrap; }
 .comparison-row > p { font-size: 11px; opacity: .75; margin: 6px 0 14px; line-height: 1.7; }
 .comparison-price { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; font-family: var(--font-mono); }
 .comparison-price > div { white-space: nowrap; }
