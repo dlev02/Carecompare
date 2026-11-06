@@ -177,7 +177,7 @@ export function HouseholdEditor({
             )}
             {children}
             {hasDevices && (
-                <details className="current-plan" key={person.id}>
+                <details className="current-plan" key={`current-plan-${person.id}`}>
                     <summary>
                         Current spending <span>Optional</span>
                     </summary>
